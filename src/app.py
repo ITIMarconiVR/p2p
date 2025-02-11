@@ -214,7 +214,7 @@ def callback():
             if result:
                 classe=result["classe"]
         
-        print("nome ", name)
+        
         if tipo=="docente" and (name not in admins and  name not in centraline):
             abilitato = True
             return "Non sei autorizzato", 401

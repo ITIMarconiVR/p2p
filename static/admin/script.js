@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             listItem.dataset.eventId = event.id;
                             
                             add.addEventListener('click', () => {
-                                console.log(event);
                                 if (confirm(`Vuoi validare questa lezione: ${event.title}?`)) {
                                     fetch('/lezioni', {
                                         method: 'POST',

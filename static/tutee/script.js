@@ -124,8 +124,6 @@ function handleEventClick(matricola, info) {
 }
 
 function removeEvent(matricola, info) {
-    console.log(info.event.start);
-    console.log(info.event.start.toISOString());
     const eventDate = new Date(info.event.start);
     const year = eventDate.getFullYear();
     const month = String(eventDate.getMonth() + 1).padStart(2, '0');
