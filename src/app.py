@@ -59,7 +59,7 @@ Session(app)
 
 # ------------------------------------------------------------------------------
 # variabili
-admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI']
+admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI', 'peerTopeer Marconi']
 resp_mail = 'claudia.carletti@marconiverona.edu.it'
 centraline = [''] # TODO: capire che fare
 
@@ -185,12 +185,12 @@ def callback():
 
         tipo="docente"
         classe=""
+        abilitato=0
         if users_email.lower().endswith("@studenti.marconiverona.edu.it"):
             # guardo se è abilitato a tutee (ha pagato il contributo volontario)
             query = "SELECT abilitato FROM Studenti WHERE email = %s"
             cursor.execute(query, (users_email, ))
             result = cursor.fetchone()
-            abilitato=0
             if result["abilitato"] == 1:
                 abilitato = True
 
@@ -214,8 +214,9 @@ def callback():
             if result:
                 classe=result["classe"]
         
-
+        print("nome ", name)
         if tipo=="docente" and (name not in admins and  name not in centraline):
+            abilitato = True
             return "Non sei autorizzato", 401
 
         user = User(unique_id, name, users_email, picture)
@@ -1257,12 +1258,16 @@ def send_email(recipients, subject, message):
 
     try:
         recipients.append(resp_mail)
-        msg = Message(subject, recipients=recipients)
-        msg.body = message
-        mail.send(msg)
+        for des in recipients:
+            msg = Message(subject, recipients=[des])
+            msg.body = message
+            mail.send(msg)
+
         return jsonify({"message": "Email sent successfully"}), 200
     except Exception as e:
         print(f"An error occurred: {e}")
+        print(recipients)
+        print(msg)
         return jsonify({"error": "Internal server error"}), 500
 
 def get_destinatari(matricola):
