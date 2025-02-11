@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN - DASHBOARD</title>
+
+    <link rel="stylesheet" href="/html/admin/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js" defer></script>
+    <script src="/html/admin/script.js" defer></script>
+    <script>
+        const userName = "{{ username }}";
+        const mail = "{{ user_id }}";
+    </script> 
+</head>
+<body>
+    <header>
+        <h1 id="greeting">ADMIN DASHBOARD</h1>
+        <nav>
+            <ul>
+                <li><a href="/admin/editTutors">Modifica Tutor</a></li>
+                <li><a href="/logout">Logout</a></li>
+                <li><a href="/admin/seeEvents">Vedi eventi</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div id="modal-overlay" class="modal"> 
+            <div id="event-modal" class="modal-content"> 
+                <h3 id="modal-header"></h3> 
+                <ul id="event-list"></ul> 
+                <button id="close-modal">Chiudi</button> 
+            </div> 
+        </div>
+
+        <section>
+            <div id="unvalidated-events-header">
+                <h3>LEZIONI DA VALIDARE</h3>
+                <button id="validate-all">VALIDA TUTTO</button>
+            </div>
+            
+            <ul id="unvalidated-events-list" class="cardList"></ul>
+        </section>
+
+        <div id="calendar"></div>
+    </main>
+</body>
+</html>

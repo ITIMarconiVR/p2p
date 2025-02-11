@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUTEE - DASHBOARD</title>
+
+    <link rel="stylesheet" href="/html/tutee/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js" defer></script>
+    <script src="/html/tutee/script.js" defer></script>
+    <script>
+        const userName = "{{ username }}";
+        const mail = "{{ user_id }}";
+    </script> 
+</head>
+<body>
+    <header>
+        <h1 id="greeting">BENTORNATO, TUTEE!</h1>
+        <nav>
+            <ul id="listNav">
+                <li><a href="/tutee/prenota">Prenota</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h3>PROSSIME LEZIONI</h3>
+            <ul id="upcoming-events-list" class="cardList">
+                <!-- Upcoming lessons will be dynamically added here -->
+            </ul>
+        </section>
+        <div id="calendar"></div>
+    </main>
+</body>
+</html>

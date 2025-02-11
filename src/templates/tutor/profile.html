@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUTOR - MATERIE</title>
+
+    <link rel="stylesheet" href="/html/tutor/profile/style.css">
+    <script src="/html/tutor/profile/script.js" defer></script>
+    <script>
+        const userName = "{{ username }}";
+        const mail = "{{ user_id }}";
+    </script> 
+</head>
+<body>
+    <header>
+        <h1 id="greeting">BENTORNATO, TUTOR!</h1>
+        <nav>
+            <ul>
+                <li><a href="/loginTutor">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>LE MATERIE CHE INSEGNI</h2>
+
+        <section id="add-subject-form">
+            <form id="add-subject">
+                <h3>AGGIUNGI MATERIA</h3>
+                <div class="form-group">
+                    <p>Nome della materia come indicato sull'orario</p>
+                    <div class="select-wrapper">
+                        <select id="subject-name">
+                            <option value="-1">Materia</option>
+                        </select>
+                        <span class="icon arrow-drop-down"></span>
+                    </div>
+                </div>
+                <button type="button" onclick="handleAddSubject()">Aggiungi materia</button>
+            </form>
+        </section>        
+
+        <div class="content-wrapper">
+            <table class="subjects-table">
+                <thead>
+                    <tr>
+                        <th>Materia</th>
+                        <th>Rimuovi</th>
+                    </tr>
+                </thead>
+                <tbody id="subjects-table-content">
+                    <!-- Subjects will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

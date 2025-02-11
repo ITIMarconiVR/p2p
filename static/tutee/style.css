@@ -1,0 +1,23 @@
+@import '../main.css';
+
+/*header*/
+header {
+    background-color: var(--primary-color_tutee);
+}
+
+/*button*/
+button {
+    background-color: var(--primary-color_tutee);
+}
+
+button:hover {
+    background-color: var(--primary-color-hover_tutee);
+}
+
+button:active {
+    background-color: var(--primary-color-active_tutee);
+}
+
+button:focus {
+    box-shadow: 0 2px 4px rgba(0, 221, 155, 0.3);
+}

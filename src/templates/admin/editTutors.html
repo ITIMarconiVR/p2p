@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN - EDIT TUTORS</title>
+
+    <link rel="stylesheet" href="/html/admin/editTutors/style.css">
+    <script src="/html/admin/editTutors/script.js" defer></script>
+    <script>
+        const userName = "{{ username }}";
+        const mail = "{{ user_id }}";
+    </script> 
+</head>
+<body>
+    <header id="header">
+        <h1 id="greeting">ADMIN DASHBOARD</h1>
+        <nav>
+            <ul>
+                <li><a href="/loginDocenti">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div id="add-tutor-modal" class="modal">
+            <div class="modal-content">
+                <h3>AGGIUNGI TUTOR</h3>
+                <form id="add-tutor">
+                    <div class="form-group">
+                        <label for="tutor-matricola">Matricola:</label>
+                        <input type="text" id="tutor-matricola" name="matricola" required>
+                    </div>
+                    <button onclick="handleAddTutor();" type="submit">Aggiungi Tutor</button>
+                </form>
+            </div>
+        </div>
+
+        <table id="tutors-table">
+            <thead id="thead">
+                <tr>
+                    <th>Matricola</th>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Classe</th>
+                    <th>Azione</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Tutor rows will be dynamically added here -->
+            </tbody>
+        </table>
+        
+        <div id="modal-overlay" class="modal"> 
+            <div id="event-modal" class="modal-content"> 
+                <h3 id="modal-header"></h3> 
+                <p id="modal-text"></p>
+                <ul id="materie-list"></ul> 
+                <button id="close-modal">Chiudi</button> 
+            </div> 
+        </div>
+
+        <button id="open-add-tutor-modal" class="circular-button">+</button>
+    </main>
+</body>
+</html>

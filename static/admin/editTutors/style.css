@@ -1,0 +1,90 @@
+@import '../../main.css'; 
+
+/* Header */
+header {
+    background-color: var(--primary-color_docente);
+}
+
+/* Add Tutor */
+#add-tutor {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5vh;
+    width: 100%;
+}
+
+.modal-content input:focus {
+    border-color: var(--primary-color_docente);
+}
+
+.modal-content button {
+    padding: 10px 20px;
+}
+
+/* Button */
+button {
+    background-color: var(--primary-color_docente);
+}
+
+button:hover {
+    background-color: var(--primary-color-hover_docente);
+}
+
+button:active {
+    background-color: var(--primary-color-active_docente);
+}
+
+button:focus {
+    box-shadow: 0 2px 4px rgba(238, 0, 0, 0.3);
+}
+
+/* Table */
+#tutors-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#tutors-table th, #tutors-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+#tutors-table tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+
+#tutors-table th {
+    background-color: var(--primary-color_docente);
+    color: #fff;
+}
+
+#tutors-table tr:hover {
+    background-color: #dfdfdf;
+}
+
+#tutors-table button {
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+#tutors-table thead {
+    position: sticky;
+    top: -20px;
+}
+
+/* Add Button */
+.circular-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 2em;
+    background-color: var(--primary-color_docente);
+}
+
+.circular-button:hover {
+    background-color: var(--primary-color-hover_docente);
+}

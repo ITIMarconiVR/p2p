@@ -1,0 +1,54 @@
+@import '../main.css';
+
+/* Header */
+header {
+    background-color: var(--primary-color_docente);
+}
+
+.hasEvents {
+    cursor: pointer;
+}
+
+.hasEvents li {
+    pointer-events: none;
+}
+
+.hasEvents:hover {
+    background-color: #f5f5f5;
+}
+
+.modal-content input:focus {
+    border-color: var(--primary-color_docente);
+}
+
+.modal-content button {
+    padding: 10px 20px;
+}
+
+/* Button */
+button {
+    background-color: var(--primary-color_docente);
+}
+
+button:hover {
+    background-color: var(--primary-color-hover_docente);
+}
+
+button:active {
+    background-color: var(--primary-color-active_docente);
+}
+
+button:focus {
+    box-shadow: 0 2px 4px rgba(238, 0, 0, 0.3);
+}
+
+
+.cardlist li{
+    margin: 0;
+}
+
+#unvalidated-events-header{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+}

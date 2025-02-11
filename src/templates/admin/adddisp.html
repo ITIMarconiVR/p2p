@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modulo di Registrazione</title>
+</head>
+<body>
+
+    <h2>Modulo di Registrazione</h2>
+
+    <form id="registrationForm">
+        <label for="student">Seleziona uno studente:</label>
+        <select id="student" name="matricola" required>
+            <option value="">Caricamento...</option>
+        </select><br><br>
+
+        <label for="date">Data:</label>
+        <input type="date" id="date" name="data" required><br><br>
+
+        <label for="choice">Scegli tra 1 e 2:</label>
+        <select id="choice" name="ora" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select><br><br>
+
+        <button type="submit">Invia</button>
+    </form>
+
+    <script>
+        // Funzione per caricare i dati dal servizio
+        async function loadStudents() {
+            const response = await fetch('/tutor');
+            const students = await response.json();
+
+            const studentSelect = document.getElementById('student');
+            studentSelect.innerHTML = '';  // Rimuove l'opzione di caricamento
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.matricola;
+                option.textContent = `${student.cognome} ${student.nome} - ${student.matricola}`;
+                studentSelect.appendChild(option);
+            });
+        }
+
+        // Carica gli studenti appena la pagina è pronta
+        document.addEventListener('DOMContentLoaded', loadStudents);
+
+        // Gestione del submit del form
+        document.getElementById('registrationForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const formObject = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formObject)
+            });
+
+            if (response.ok) {
+                alert('Dati inviati con successo!');
+            } else {
+                alert('Errore nell\'invio dei dati.');
+            }
+        });
+    </script>
+
+</body>
+</html>

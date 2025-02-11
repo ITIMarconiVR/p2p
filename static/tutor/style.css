@@ -1,0 +1,33 @@
+@import '../main.css';
+
+/*header*/
+header {
+    background-color: var(--primary-color_tutor);
+}
+
+/*Modal*/
+#data-info {
+    text-align: center;
+}
+
+/* Button */
+button {
+    background-color: var(--primary-color_tutor);
+}
+
+button:hover {
+    background-color: var(--primary-color-hover_tutor);
+}
+
+button:active {
+    background-color: var(--primary-color-active_tutor);
+}
+
+button:focus {
+    box-shadow: 0 2px 4px rgba(92, 0, 221, 0.3);
+}
+
+select:focus {
+    border-color: var(--primary-color_tutor);
+    box-shadow: 0 0 5px rgba(92, 0, 221, 0.3);
+}

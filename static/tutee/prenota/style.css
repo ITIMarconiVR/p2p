@@ -1,0 +1,56 @@
+@import '../../main.css';
+
+/*header*/
+header {
+    background-color: var(--primary-color_tutee);
+}
+
+/*filters*/
+.filters {
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    gap: 1vh;
+    width: fit-content;
+}
+
+.filters h3 {
+    align-self: center;
+}
+
+.filters div{
+    display: flex;
+    gap: 1vw;
+    /* width: 400px; */
+}
+
+
+.filters label {
+    width: 100%;
+}
+
+select:focus {
+    border-color: var(--primary-color_tutee);
+    box-shadow: 0 0 5px rgba(0, 221, 155, 0.3);
+}
+
+/*button*/
+button {
+    background-color: var(--primary-color_tutee);
+}
+
+input:focus {
+    border-color: var(--primary-color_tutee);
+}
+
+button:hover {
+    background-color: var(--primary-color-hover_tutee);
+}
+
+button:active {
+    background-color: var(--primary-color-active_tutee);
+}
+
+button:focus {
+    box-shadow: 0 2px 4px rgba(0, 221, 155, 0.3);
+}

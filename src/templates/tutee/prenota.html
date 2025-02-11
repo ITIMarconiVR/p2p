@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUTEE - PRENOTA</title>
+
+    <link rel="stylesheet" href="/html/tutee/prenota/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js" defer></script>
+    <script src="/html/tutee/prenota/script.js" defer></script>
+
+    <script>
+        const userName = "{{ username }}";
+        const mail = "{{ user_id }}";
+    </script> 
+</head>
+<body>
+    <header>
+        <h1 id="greeting">Benvenuto, Tutee!</h1>
+        <nav>
+            <ul>
+                <li><a href="/loginTutee">Dashboard</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div id="add-tutor-modal" class="modal">
+            <div class="modal-content">
+                <h3>Prenota Lezione</h3>
+                <p id="tutor-info"></p>
+                <div>
+                    <label for="shift-mat">Seleziona materia:</label>
+                    <div class="select-wrapper">
+                        <select id="shift-mat" name="shift-mat" required></select>
+                        <span class="icon arrow-drop-down"></span>
+                    </div>
+                </div>
+                <input type="text" id="lesson-dettagli" placeholder="Inserisci dettagli lezione" required>
+                <button id="confrimLessonButton" onclick="confirmLess();">Conferma Lezione</button>
+            </div>
+        </div>
+
+        <section class="filters">
+            <h3>FILTRI</h3>
+            <div>
+                <label for="materie">Filtra per materia:</label>
+                <div class="select-wrapper">
+                    <select id="materie"></select>
+                    <span class="icon arrow-drop-down"></span>
+                </div>
+            </div>
+            <div>
+                <label for="tutor_classes">Filtra per anno del tutor:</label>
+                <div class="select-wrapper">
+                    <select id="tutor_classes"></select>
+                    <span class="icon arrow-drop-down"></span>
+                </div>
+            </div>
+            <div>
+                <label for="tutor_indirizzo">Filtra per indirizzo del tutor:</label>
+                <div class="select-wrapper">
+                    <select id="tutor_indirizzo"></select>
+                    <span class="icon arrow-drop-down"></span>
+                </div>
+            </div>
+            <div>
+                <label for="tutor_nomi">Filtra per nome del tutor:</label>
+                <div class="select-wrapper">
+                    <select id="tutor_nomi"></select>
+                    <span class="icon arrow-drop-down"></span>
+                </div>
+            </div>
+        </section>
+        
+        <div>
+            <h2>Lezioni</h2>
+            <p>Per prenotare una lezione è sufficiente cliccare su di essa nel calendario qui sotto</p>
+        </div>
+
+        <div id="calendar"></div>
+    </main>
+</body>
+</html>
