@@ -59,7 +59,7 @@ Session(app)
 
 # ------------------------------------------------------------------------------
 # variabili
-admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI', 'peerTopeer Marconi']
+admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI']
 resp_mail = 'claudia.carletti@marconiverona.edu.it'
 centraline = [''] # TODO: capire che fare
 
@@ -185,13 +185,12 @@ def callback():
 
         tipo="docente"
         classe=""
-        abilitato = True
         if users_email.lower().endswith("@studenti.marconiverona.edu.it"):
             # guardo se è abilitato a tutee (ha pagato il contributo volontario)
             query = "SELECT abilitato FROM Studenti WHERE email = %s"
             cursor.execute(query, (users_email, ))
             result = cursor.fetchone()
-            abilitato=False
+            abilitato=0
             if result["abilitato"] == 1:
                 abilitato = True
 
@@ -215,6 +214,7 @@ def callback():
             if result:
                 classe=result["classe"]
         
+
         if tipo=="docente" and (name not in admins and  name not in centraline):
             return "Non sei autorizzato", 401
 
@@ -461,7 +461,20 @@ def noticeTutees(matricola):
         for tutee in tutees:
             destinatari = get_destinatari(tutee[0])
             send_email(destinatari, 'Lezione cancellata', f'Tutte le lezioni del tutor {nome_cogn[0]} {nome_cogn[1]} sono state rimosse')
-            
+        
+        # prendi tutti i dati delle lezioni del tutor e mettili nella tabella LezioniTutorRimossi
+        cursor = db.cursor(dictionary=True)
+        query_get = """SELECT * FROM Lezioni WHERE matricolaP = %s"""
+        cursor.execute(query_get, (matricola,))
+        lezioni = cursor.fetchall()
+
+        query_add = """INSERT INTO LezioniTutorRimossi (matricolaP, data, ora, matricolaT, materiaL, argomenti, validata, aulaL)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+        for lezione in lezioni:
+            cursor.execute(query_add, (lezione['matricolaP'], lezione['data'], lezione['ora'], lezione['matricolaT'], lezione['materiaL'], lezione['argomenti'], lezione['validata'], lezione['aulaL']))
+            db.commit()
+
+        # rimuovi tutte le lezioni del tutor
         query = """
             DELETE FROM Lezioni
             WHERE matricolaT = %s AND data >= CURDATE()
@@ -624,7 +637,7 @@ def reserve_event():
     materiaL = request.json.get('materiaL')
     argomenti = request.json.get('argomenti')
     argomenti = str(escape(argomenti))
-    print(argomenti)
+
     if not matricolaP or not ora or not data or not matricolaT or not materiaL or not argomenti:
         return jsonify({"error": "Attributes are required"}), 400
     
@@ -962,7 +975,22 @@ def delete_lezione_tutor():
             cursor.execute(query_nome, (matricolaT, ))
             nome_cognT = cursor.fetchone()
 
+        
+        # prendo i dati della lezione da cancellare e li metto nella tabella delle lezioni rimosse per tenerne traccia
+        cursor = db.cursor(dictionary=True)
+        query_get = """SELECT * FROM Lezioni WHERE matricolaP = %s AND data = %s AND ora = %s"""
+        cursor.execute(query_get, (matricolaP, data, ora))
+        lezione = cursor.fetchone()
 
+        query_insert = """INSERT INTO LezioniCancellate 
+                                (matricolaP, data, ora, matricolaT, materiaL, argomenti, validata, aulaL, svolta, deleter)
+                            VALUES 
+                                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        cursor.execute(query_insert, (lezione['matricolaP'], lezione['data'], lezione['ora'], lezione['matricolaT'], lezione['materiaL'], lezione['argomenti'], lezione['validata'], lezione['aulaL'], lezione['svolta'], matricolaP))
+        db.commit()
+            
+        # rimuovo la lezione dalla tabella lezioni
+        cursor = db.cursor()
         query = """
             DELETE FROM Lezioni
             WHERE matricolaP = %s AND data = %s AND ora = %s AND DATE(data) > CURDATE()
@@ -1022,7 +1050,21 @@ def delete_lezione_tutee():
         cursor.execute(query_nome, (matricolaT, ))
         nome_cognT = cursor.fetchone()
 
+        # prendo i dati della lezione da sprenotare e li metto nella tabella delle lezioni rimosse per tenerne traccia
+        cursor = db.cursor(dictionary=True)
+        query_get = """SELECT * FROM Lezioni WHERE matricolaP = %s AND data = %s AND ora = %s"""
+        cursor.execute(query_get, (matricolaP, data, ora))
+        lezione = cursor.fetchone()
+
+        query_insert = """INSERT INTO LezioniCancellate 
+                                (matricolaP, data, ora, matricolaT, materiaL, argomenti, validata, aulaL, svolta, deleter)
+                            VALUES 
+                                (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+        cursor.execute(query_insert, (lezione['matricolaP'], lezione['data'], lezione['ora'], lezione['matricolaT'], lezione['materiaL'], lezione['argomenti'], lezione['validata'], lezione['aulaL'], lezione['svolta'], matricolaT))
+        db.commit()
+
         # set null i valori del tutee nella tabella lezioni, non cancello la lezione
+        cursor = db.cursor()
         query = """
             UPDATE Lezioni
             SET matricolaT = NULL
@@ -1215,16 +1257,12 @@ def send_email(recipients, subject, message):
 
     try:
         recipients.append(resp_mail)
-        for des in recipients:
-            msg = Message(subject, recipients=[des])
-            msg.body = message
-            mail.send(msg)
-
+        msg = Message(subject, recipients=recipients)
+        msg.body = message
+        mail.send(msg)
         return jsonify({"message": "Email sent successfully"}), 200
     except Exception as e:
         print(f"An error occurred: {e}")
-        print(recipients)
-        print(msg)
         return jsonify({"error": "Internal server error"}), 500
 
 def get_destinatari(matricola):
