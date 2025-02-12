@@ -59,7 +59,7 @@ Session(app)
 
 # ------------------------------------------------------------------------------
 # variabili
-admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI']
+admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI', 'peerTopeer Marconi']
 resp_mail = 'claudia.carletti@marconiverona.edu.it'
 centraline = [''] # TODO: capire che fare
 
@@ -110,7 +110,17 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
-    # TODO: cambia in base loggato o no
+    if session and "tipo" in session.keys():
+        if session["tipo"]=="tutor":
+            return redirect("/loginTutor")
+        elif session["tipo"]=="tutee": 
+            return redirect("/loginTutee")
+        elif session["tipo"]=="docente":
+            return redirect("/loginDocenti")
+        elif session["tipo"] == "centralino":
+            return redirect("/loginCentraline")
+        else:
+            return jsonify({'error': 'Non sei autorizzato'}), 401
     return redirect('/login')
 
 def get_google_provider_cfg():
@@ -185,12 +195,12 @@ def callback():
 
         tipo="docente"
         classe=""
+        abilitato=0
         if users_email.lower().endswith("@studenti.marconiverona.edu.it"):
             # guardo se è abilitato a tutee (ha pagato il contributo volontario)
             query = "SELECT abilitato FROM Studenti WHERE email = %s"
             cursor.execute(query, (users_email, ))
             result = cursor.fetchone()
-            abilitato=0
             if result["abilitato"] == 1:
                 abilitato = True
 
@@ -214,8 +224,9 @@ def callback():
             if result:
                 classe=result["classe"]
         
-
+        
         if tipo=="docente" and (name not in admins and  name not in centraline):
+            abilitato = True
             return "Non sei autorizzato", 401
 
         user = User(unique_id, name, users_email, picture)
@@ -454,13 +465,13 @@ def noticeTutees(matricola):
         cursor.execute(query, (matricola,))
         tutees = cursor.fetchall()
 
-        query2 = """SELECT nome, cognome FROM Studenti WHERE matricola = %s"""
+        query2 = """SELECT nome, cognome, classe FROM Studenti WHERE matricola = %s"""
         cursor.execute(query2, (matricola,))
         nome_cogn = cursor.fetchone()
 
         for tutee in tutees:
             destinatari = get_destinatari(tutee[0])
-            send_email(destinatari, 'Lezione cancellata', f'Tutte le lezioni del tutor {nome_cogn[0]} {nome_cogn[1]} sono state rimosse')
+            send_email(destinatari, 'Lezione cancellata', f'Tutte le lezioni del tutor {nome_cogn[0]} {nome_cogn[1]} {nome_cogn[2]} sono state rimosse')
         
         # prendi tutti i dati delle lezioni del tutor e mettili nella tabella LezioniTutorRimossi
         cursor = db.cursor(dictionary=True)
@@ -475,10 +486,7 @@ def noticeTutees(matricola):
             db.commit()
 
         # rimuovi tutte le lezioni del tutor
-        query = """
-            DELETE FROM Lezioni
-            WHERE matricolaT = %s AND data >= CURDATE()
-        """
+        query = """DELETE FROM Lezioni WHERE matricolaT = %s AND data >= CURDATE()"""
         cursor.execute(query, (matricola,))
         db.commit()
     except Exception as e:
@@ -514,6 +522,44 @@ def deleteTutorLessons(matricola):
     except Exception as e:
         print(f"An error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
+
+'''distLezione: distanza in giorni dalla lezione cancellata: presi tutti quelli con distanza maggiore di distLezione'''
+@app.route('/lezioni_cancellate/<matricolaP>/<distLezione>/<prenotata>', methods=["GET"])
+@login_required
+def get_lezioni_cancellate(matricolaP, distLezione, prenotata):
+    if session["tipo"]!="docente":
+        return jsonify({"error": "Non sei autorizzato"}), 401
+
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+
+        if matricolaP is None:
+            return jsonify({"error": "Attributi mancanti: matricolaP"}), 400
+        
+        where_statement = """"""
+        if prenotata is not None:
+            if prenotata:
+                where_statement += "matricolaT IS NOT NULL AND "
+        elif distLezione is not None:
+            where_statement += """DATEDIFF(data, deleteDateTime) >= %s AND """
+        where_statement += "matricolaP = %s"
+
+        query = f"""
+            SELECT *
+            FROM LezioniCancellate
+            WHERE {where_statement}
+        """
+        if distLezione is not None:
+            cursor.execute(query, (distLezione, matricolaP))
+        else:
+            cursor.execute(query, (matricolaP,))
+        events = cursor.fetchall()          
+        return jsonify(events), 200
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
 
 @app.route("/users", methods=["GET"])
 @login_required
@@ -661,14 +707,14 @@ def reserve_event():
         query = """
             UPDATE Lezioni
             SET matricolaT = %s , materiaL = %s, argomenti = %s
-            WHERE matricolaP = %s AND ora = %s AND data = %s
+            WHERE matricolaP = %s AND ora = %s AND data = %s and data>=DATE_ADD(CURDATE(), INTERVAL 2 DAY)
         """
         
         cursor.execute(query, (matricolaT, materiaL, argomenti, matricolaP, ora, data))
         db.commit()
 
         query_nome = """
-                SELECT nome, cognome
+                SELECT nome, cognome, classe
                 FROM Studenti
                 WHERE matricola = %s
             """
@@ -686,7 +732,7 @@ def reserve_event():
             ora="13:40"
         elif ora==2:
             ora="14:30"
-        message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} è stata prenotata dal tutee {nome_cognT[0]} {nome_cognT[1]}.\nMateria: {materiaL}\nArgomenti: {argomenti}"""
+        message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} è stata prenotata dal tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}.\nMateria: {materiaL}\nArgomenti: {argomenti}"""
         send_email(dest, "Lezione prenotata", message)
         return jsonify({"message": "Event reserved successfully"}), 200
     except Exception as e:
@@ -894,7 +940,7 @@ def delete_lezione():
         cursor = db.cursor()
 
         query_nome = """
-                SELECT nome, cognome
+                SELECT nome, cognome, classe
                 FROM Studenti
                 WHERE matricola = %s
             """
@@ -936,9 +982,9 @@ def delete_lezione():
             ora="14:30"
 
         if matricolaT is not None:
-            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} e tutee {nome_cognT[0]} {nome_cognT[1]} è stata annullata da {deleter[0]} {deleter[1]}."""
+            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} è stata annullata da {deleter[0]} {deleter[1]}."""
         else:
-            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} è stata annullata da {deleter[0]} {deleter[1]}."""
+            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} è stata annullata da {deleter[0]} {deleter[1]} {deleter[2]}."""
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})
@@ -965,7 +1011,7 @@ def delete_lezione_tutor():
         cursor = db.cursor()
 
         query_nome = """
-                SELECT nome, cognome
+                SELECT nome, cognome, classe
                 FROM Studenti
                 WHERE matricola = %s
             """
@@ -1011,9 +1057,9 @@ def delete_lezione_tutor():
             ora="14:30"
 
         if matricolaT is not None:
-            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} e tutee {nome_cognT[0]} {nome_cognT[1]} è stata annullata da {nome_cognP[0]} {nome_cognP[1]}."""
+            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} è stata annullata da {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]}."""
         else:
-            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} è stata annullata da {nome_cognP[0]} {nome_cognP[1]}."""
+            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognT[2]} è stata annullata da {nome_cognP[0]} {nome_cognP[1]} {nome_cognT[2]}."""
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})
@@ -1041,7 +1087,7 @@ def delete_lezione_tutee():
         
         # prendi i nomi dei tutor e tutee
         query_nome = """
-                SELECT nome, cognome
+                SELECT nome, cognome, classe
                 FROM Studenti
                 WHERE matricola = %s
             """
@@ -1067,7 +1113,7 @@ def delete_lezione_tutee():
         cursor = db.cursor()
         query = """
             UPDATE Lezioni
-            SET matricolaT = NULL
+            SET matricolaT = NULL, materiaL = NULL, argomenti = NULL, aulaL = NULL
             WHERE matricolaT = %s AND data = %s AND ora = %s AND DATE(data) >= CURDATE()
         """
         cursor.execute(query, (matricolaT, data, ora))
@@ -1083,7 +1129,7 @@ def delete_lezione_tutee():
         elif ora==2:
             ora="14:30"
 
-        message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} e tutee {nome_cognT[0]} {nome_cognT[1]} è stata annullata da {nome_cognT[0]} {nome_cognT[1]}."""
+        message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} è stata annullata da {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}."""
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})
@@ -1257,12 +1303,16 @@ def send_email(recipients, subject, message):
 
     try:
         recipients.append(resp_mail)
-        msg = Message(subject, recipients=recipients)
-        msg.body = message
-        mail.send(msg)
+        for des in recipients:
+            msg = Message(subject, recipients=[des])
+            msg.body = message
+            mail.send(msg)
+
         return jsonify({"message": "Email sent successfully"}), 200
     except Exception as e:
         print(f"An error occurred: {e}")
+        print(recipients)
+        print(msg)
         return jsonify({"error": "Internal server error"}), 500
 
 def get_destinatari(matricola):

@@ -168,9 +168,13 @@ function createCalendar(matricola, fetchUrl) {
                 });
         },
         selectAllow: selectInfo => {
-            const now = new Date();
-            now.setDate(now.getDate() + 2);
-            return selectInfo.start >= now;
+            checkDate = selectInfo.start;
+            const today = new Date();
+            const twoDaysFromNow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+            const checkDate = new Date(dateToCheck);
+            const dateOnly = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate());
+            
+            return dateOnly >= twoDaysFromNow;
         },
         eventClick: async info => {
             showPrenotaLezione(info);
@@ -202,9 +206,10 @@ function createCalendar(matricola, fetchUrl) {
 
 async function showPrenotaLezione(info) {
     const now = new Date();
-
+    // add 2 days to the current date
+    now.setDate(now.getDate() + 2);
     if (info.event.start <= now) {
-        alert('Non puoi prenotare una lezione per una data passata od odierna.');
+        alert('Puoi prenotare lezioni con minimo due giorni di anticipo.');
         return;
     }
     const tuteeAvailable = await tuteeHasLesson(info);

@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Bentornato, ${newUserName}!`;
     }
 
+    document.getElementById('validate-all').addEventListener('click', () => valida_tutto());
+
     const calendarEl = document.getElementById('calendar');
     const unvalidatedEventsList = document.getElementById('unvalidated-events-list');
 
@@ -46,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             listItem.dataset.eventId = event.id;
                             
                             add.addEventListener('click', () => {
-                                console.log(event);
                                 if (confirm(`Vuoi validare questa lezione: ${event.title}?`)) {
                                     fetch('/lezioni', {
                                         method: 'POST',
@@ -150,3 +151,27 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'flex';
     });
 });
+
+function valida_tutto() {
+    if (confirm('Vuoi validare tutte le lezioni?')) {
+        fetch('/valida_tutto', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert('Tutte le lezioni sono state validate con successo');
+                location.reload();
+            } else {
+                alert(`Errore: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            console.error('Errore durante la validazione delle lezioni', error);
+            alert('Si è verificato un errore. Riprova.');
+        });
+    }
+}

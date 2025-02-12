@@ -50,7 +50,6 @@ async function populateLessonLists(future, pastReserved) {
 
                 const li = document.createElement('li');
                 if (date < new Date()) {
-                    console.log('ora', event.ora);
                     li.textContent = `Lezione ${dateFormatted} alle ${event.ora === 2 ? '14:30' : '13:40'} con ${event.matricolaT}: ${event.nomeT} ${event.cognomeT}`;
                     heldList.appendChild(li);   
                 } else {
@@ -103,17 +102,14 @@ function createCalendar(id, fetchUrl) {
                 });
         },
         selectAllow: (selectInfo) => {
-            console.log(info);
             const now = new Date();
             now.setDate(now.getDate() + 2);
             return selectInfo.start >= now;
         },
         dateClick: (info) => {
-            console.log(info);
             handleDateClick(info, calendar);
         },
         eventClick: (info) => {
-            console.log(info);
             handleEventClick(info);
         },
         dayCellDidMount: (info) => {
@@ -150,7 +146,6 @@ function handleDateClick(info, calendar) {
 
 function handleEventClick(info) {
     if (info.event.extendedProps.matricolaP === matricola) {
-        console.log('Removing lesson', info);
         removeLesson(info);
     }
 }
@@ -238,7 +233,6 @@ function removeLesson(info) {
     fetch(`/lezioni?matricolaP=${matricola}&data=${formattedDate}&ora=${info.event.extendedProps.ora}`)
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         data = data[0];
         const now = new Date();
         const eventDate = new Date(info.event.start);
