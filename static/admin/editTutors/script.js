@@ -102,9 +102,19 @@ function seeTutorInfo(tutor) {
     const modal = document.getElementById('modal-overlay');
     document.getElementById('modal-header').textContent = `Informazioni sul tutor ${tutor.nome} ${tutor.cognome}`;
 
+    // lista materie insegnate dal tutor
     const materieList = document.getElementById('materie-list');
     materieList.innerHTML = '';
     addMaterieInsegnate(tutor.matricolaP, materieList);
+
+    // numero lezioni cancellate dal tutor che erano prenotate e sono state cancellate a meno di due giorni dalla data della lezione
+    const meno2g_prenotate = document.getElementById('meno2g_prenotate');
+    meno2g_prenotate.innerHTML = '';
+    statisticheTutor(tutor.matricolaP, 2, 1);
+    
+
+
+
 
     document.getElementById('modal-text').innerHTML = `Matricola: ${tutor.matricolaP}<br>Nome: ${tutor.nome}<br>Cognome: ${tutor.cognome}<br>Classe: ${tutor.classe}`;
 
@@ -119,4 +129,12 @@ function addMaterieInsegnate(matricola, list) {
             list.innerHTML += `${data.map(materia => `<li>${materia}</li>`).join('')}`;
         })
         .catch(error => console.error('Error fetching materie:', error));
+}
+
+function statisticheTutor(matricola, distLezione=null, prenotata=0) {
+    fetch(`/lezioni_cancellate/${matricola}/${distLezione}/${prenotata}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
 }
