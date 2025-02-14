@@ -157,7 +157,6 @@ def login():
     #LLLreturn redirect(request_uri)
 
     # Salva lo stato nella sessione per la protezione CSRF ???
-    print(session)
     session['oauth_state'] = state
 
     return redirect(request_uri)
@@ -581,22 +580,23 @@ def get_lezioni_cancellate(matricolaP, distLezione, prenotata):
             return jsonify({"error": "Attributi mancanti: matricolaP"}), 400
         
         where_statement = """"""
+        parameters = []
         if prenotata is not None:
             if prenotata:
                 where_statement += "matricolaT IS NOT NULL AND "
         elif distLezione is not None:
             where_statement += """DATEDIFF(data, deleteDateTime) >= %s AND """
+            parameters.append(distLezione)
         where_statement += "matricolaP = %s"
+        parameters.append(matricolaP)
 
         query = f"""
             SELECT *
             FROM LezioniCancellate
             WHERE {where_statement}
         """
-        if distLezione is not None:
-            cursor.execute(query, (distLezione, matricolaP))
-        else:
-            cursor.execute(query, (matricolaP,))
+        
+        cursor.execute(query, parameters)
         events = cursor.fetchall()          
         return jsonify(events), 200
     except Exception as e:
