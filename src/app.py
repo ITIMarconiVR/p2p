@@ -110,17 +110,17 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
-    if session and "tipo" in session.keys():
-        if session["tipo"]=="tutor":
-            return redirect("/loginTutor")
-        elif session["tipo"]=="tutee": 
-            return redirect("/loginTutee")
-        elif session["tipo"]=="docente":
-            return redirect("/loginDocenti")
-        elif session["tipo"] == "centralino":
-            return redirect("/loginCentraline")
-        else:
-            return jsonify({'error': 'Non sei autorizzato'}), 401
+    # if session and "tipo" in session.keys():
+    #     if session["tipo"]=="tutor":
+    #         return redirect("/loginTutor")
+    #     elif session["tipo"]=="tutee": 
+    #         return redirect("/loginTutee")
+    #     elif session["tipo"]=="docente":
+    #         return redirect("/loginDocenti")
+    #     elif session["tipo"] == "centralino":
+    #         return redirect("/loginCentraline")
+    #     else:
+    #         return jsonify({'error': 'Non sei autorizzato'}), 401
     return redirect('/login')
 
 def get_google_provider_cfg():
@@ -135,34 +135,36 @@ def login():
     # OAuth 2 client setup
     client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
+    # Genera un valore di stato casuale
+    state = os.urandom(16).hex()  # Crea una stringa esadecimale di 32 caratteri
+    
     # Use library to construct the request for Google login and provide
     # scopes that let you retrieve user's profile from Google
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=request.base_url + "/callback",
         scope=["openid", "email", "profile"],
+        state=state
     )
     #LLLprint("request_uri login", request_uri)
     #LLLreturn redirect(request_uri)
 
-    # Genera un valore di stato casuale
-    state = os.urandom(16).hex()  # Crea una stringa esadecimale di 32 caratteri
     # Salva lo stato nella sessione per la protezione CSRF ???
+    print(session)
     session['oauth_state'] = state
 
-    # Aggiungi il parametro state all'URL
-    request_uri_with_state = f"{request_uri}&state={state}"
-
-    return redirect(request_uri_with_state)
+    return redirect(request_uri)
 
 @app.route("/login/callback")
-def callback():
+def callback():    
+    # Ottieni i dati di configurazione del provider Google
     code = request.args.get("code")
+    state = request.args.get("state", default=None, type=None)
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
 
     # Usa il codice per ottenere un token di accesso
-    oauth_session = OAuth2Session(GOOGLE_CLIENT_ID, state=session['oauth_state'], redirect_uri=request.base_url)
+    oauth_session = OAuth2Session(GOOGLE_CLIENT_ID, state=state, redirect_uri=request.base_url)
     oauth_session.fetch_token(token_endpoint, client_secret=GOOGLE_CLIENT_SECRET, authorization_response=request.url)
     # Salva il token nella sessione
     session['google_token'] = oauth_session.token
