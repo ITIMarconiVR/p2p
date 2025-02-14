@@ -141,10 +141,12 @@ section {
 /* Card Lists */
 .cardList {
     list-style: none;
-    padding: 0;
     display: flex;
     flex-direction: column;
+    gap: 15px;
+    padding: 15px;;
 }
+
 
 .cardList li {
     background-color: #fff;
@@ -152,10 +154,8 @@ section {
     border-radius: 8px;
     padding: 10px 15px;
     margin: 15px;
-    display: flex;
-    align-items: center;
     box-shadow: var(--box-shadow);
-    justify-content: space-between;
+    margin: 0;
 }
 
 .cardList li button {
