@@ -79,4 +79,65 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial fetch and display
     updateDateDisplay();
     fetchLessons(currentDate);
+
+
+    function generaPDF(date) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("p", "mm", "a4");
+
+        const strdata = formatDate(date);
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(16);
+        // doc.text("Peer2Peer: " + strdata, 14, 10);
+
+        fetch("/lezioni2?matricolaT=%&data=" + strdata)
+            .then((response) => response.json())
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    data = data.sort((a, b) => a.ora - b.ora);
+                    const lessons = data.map((lesson) => {
+                        const {data, ora, nomeP, cognomeP, classeP, nomeT, cognomeT, classeT, } = lesson;
+                        return [
+                            new Date(data).toISOString().split("T")[0],
+                            ora === 1 ? "13:40" : "14:30",
+                            `${nomeP} ${cognomeP}\n(${classeP})`,
+                            `${nomeT} ${cognomeT}\n(${classeT})`,
+                            " ",
+                            " ",
+                        ];
+                    });
+
+                    doc.autoTable({
+                        head: [["Data", "Ora", "Tutor", "Tutorato", "Aula",  "Firma"]],
+                        body: lessons,
+                        theme: "grid",
+                        styles: { fontSize: 10, cellPadding: 2 },
+                        headStyles: {
+                            fillColor: [255, 255, 255],
+                            textColor: 0,
+                            fontSize: 11,
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 25 },
+                            1: { cellWidth: 15 },
+                            2: { cellWidth: 45 },
+                            3: { cellWidth: 45 },
+                            4: { cellWidth: 15 },
+                            5: { cellWidth: 45 },
+                        },
+                    });
+
+                    const name = `Peer2Peer_${strdata}.pdf`;
+                    doc.save(name);
+                }
+            })
+            .catch((error) =>
+                console.error("Errore nel recupero dati:", error)
+            );
+    }
+
+    document.getElementById("pdf-button").addEventListener("click", () => {
+        generaPDF(currentDate);
+    });
 });
