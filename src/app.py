@@ -5,6 +5,7 @@ from flask_session import Session
 from db import get_db
 from flask_mail import Mail, Message
 import datetime
+import shutil
 
 #LLL remove
 #from authlib.integrations.flask_client import OAuth
@@ -41,10 +42,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SECRET_KEY']="qwerasdzxc123098poi__#@[]"
 app.config['BASE_DIR']=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-app.config["SESSION_FILE_DIR"] =app.config["BASE_DIR"]
 app.config['UPLOAD_FOLDER'] = app.config['BASE_DIR'] + '/import'
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
@@ -52,6 +50,15 @@ app.config['MAIL_USERNAME'] = 'p2p@marconiverona.edu.it'
 app.config['MAIL_PASSWORD'] = 'P2p2025$'
 app.config['MAIL_DEFAULT_SENDER'] = 'p2p@marconiverona.edu.it'
 app.config['MAIL_DEBUG'] = False
+
+SESSION_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sessions')
+if not os.path.exists(SESSION_DIR):
+    os.makedirs(SESSION_DIR)
+app.config['SESSION_FILE_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sessions')
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_FILE_LIFETIME"] = datetime.timedelta(days=7)
+
 mail = Mail(app)
 Session(app)
 #app.secret_key = os.urandom(24)
@@ -322,6 +329,40 @@ def admin_editTutors():
 @login_required
 def admin_seeEvents():
     return render_template("admin/seeEvents.html", username=session["name"], user_id=session["mail"], tipo=session["tipo"])
+
+# ------------------------------------------------------------------------------
+# Gestione sessioni
+
+def cleanup_old_sessions():
+    """Remove session files older than 7 days"""
+    current_time = datetime.datetime.now()
+    for filename in os.listdir(SESSION_DIR):
+        filepath = os.path.join(SESSION_DIR, filename)
+        # Get file modification time
+        file_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))
+        # If file is older than 7 days, delete it
+        if current_time - file_time > datetime.timedelta(days=7):
+            try:
+                os.remove(filepath)
+            except OSError as e:
+                print(f"Error deleting {filepath}: {e}")
+
+# Schedule cleanup to run periodically
+def schedule_cleanup():
+    """
+    Schedule the cleanup function to run daily
+    You can use any scheduling method (APScheduler, celery, cron, etc.)
+    Here's an example using APScheduler
+    """
+    from apscheduler.schedulers.background import BackgroundScheduler
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(cleanup_old_sessions, 'interval', days=1)
+    scheduler.start()
+
+@app.before_first_request
+def init_app():
+    schedule_cleanup()
+
 
 @app.route("/logout")
 @login_required
@@ -1349,4 +1390,6 @@ def get_destinatari(matricola):
         return jsonify({"error": "error while fetching user data"}), 401
 
 if __name__ == "__main__":
+    # Run initial cleanup
+    cleanup_old_sessions()
     app.run(ssl_context="adhoc",host='0.0.0.0', port=5000, debug=True)
