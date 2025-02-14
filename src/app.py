@@ -65,10 +65,10 @@ Session(app)
 
 
 # ------------------------------------------------------------------------------
-# variabili
+# utenti speciali
 admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI', 'peerTopeer Marconi']
 resp_mail = 'claudia.carletti@marconiverona.edu.it'
-centraline = [''] # TODO: capire che fare
+centraline = ['PAOLA LAVAGNOLI', 'LUISELLA CARLI', 'PALMINA GIANNETTO'] 
 
 
 # ------------------------------------------------------------------------------
@@ -359,9 +359,9 @@ def schedule_cleanup():
     scheduler.add_job(cleanup_old_sessions, 'interval', days=1)
     scheduler.start()
 
-@app.before_first_request
-def init_app():
-    schedule_cleanup()
+# @app.before_first_request
+# def init_app():
+#     schedule_cleanup()
 
 
 @app.route("/logout")
@@ -1391,5 +1391,5 @@ def get_destinatari(matricola):
 
 if __name__ == "__main__":
     # Run initial cleanup
-    cleanup_old_sessions()
+    # cleanup_old_sessions()
     app.run(ssl_context="adhoc",host='0.0.0.0', port=5000, debug=True)
