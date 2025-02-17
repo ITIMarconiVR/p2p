@@ -4,8 +4,9 @@ from flask import Flask, request, jsonify, redirect, session, send_from_director
 from flask_session import Session
 from db import get_db
 from flask_mail import Mail, Message
-import datetime
 import shutil
+from datetime import datetime, timedelta
+from GoogleCalendarManager import GoogleCalendarManager
 
 #LLL remove
 #from authlib.integrations.flask_client import OAuth
@@ -57,7 +58,7 @@ if not os.path.exists(SESSION_DIR):
 app.config['SESSION_FILE_DIR'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sessions')
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.config["SESSION_FILE_LIFETIME"] = datetime.timedelta(days=7)
+app.config["SESSION_FILE_LIFETIME"] = timedelta(days=7)
 
 mail = Mail(app)
 Session(app)
@@ -150,7 +151,7 @@ def login():
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=request.base_url + "/callback",
-        scope=["openid", "email", "profile"],
+        scope=["openid", "email", "profile", "https://www.googleapis.com/auth/calendar"],
         state=state
     )
     #LLLprint("request_uri login", request_uri)
@@ -334,13 +335,13 @@ def admin_seeEvents():
 
 def cleanup_old_sessions():
     """Remove session files older than 7 days"""
-    current_time = datetime.datetime.now()
+    current_time = datetime.now()
     for filename in os.listdir(SESSION_DIR):
         filepath = os.path.join(SESSION_DIR, filename)
         # Get file modification time
-        file_time = datetime.datetime.fromtimestamp(os.path.getmtime(filepath))
+        file_time = datetime.fromtimestamp(os.path.getmtime(filepath))
         # If file is older than 7 days, delete it
-        if current_time - file_time > datetime.timedelta(days=7):
+        if current_time - file_time > timedelta(days=7):
             try:
                 os.remove(filepath)
             except OSError as e:
@@ -361,6 +362,13 @@ def schedule_cleanup():
 # @app.before_first_request
 # def init_app():
 #     schedule_cleanup()
+
+
+# ----------------------------------------------------------------
+# Google calendar
+
+
+
 
 
 @app.route("/logout")
@@ -752,8 +760,29 @@ def reserve_event():
             SET matricolaT = %s , materiaL = %s, argomenti = %s
             WHERE matricolaP = %s AND ora = %s AND data = %s and data>=DATE_ADD(CURDATE(), INTERVAL 2 DAY)
         """
-        
         cursor.execute(query, (matricolaT, materiaL, argomenti, matricolaP, ora, data))
+
+        if cursor.rowcount > 0 and 'google_token' in session:
+            calendar_manager = GoogleCalendarManager(session['google_token'])
+            
+            event_details = {
+                'data': data,
+                'ora': ora,
+                'materiaL': materiaL,
+                'argomenti': argomenti,
+                'matricolaT': matricolaT,
+                'matricolaP': matricolaP
+            }
+            
+            success, calendar_id = calendar_manager.create_lesson_event(event_details)
+            if success:
+                # Store the calendar event ID
+                cursor.execute("""
+                    UPDATE Lezioni 
+                    SET google_calendar_id = %s
+                    WHERE matricolaP = %s AND ora = %s AND data = %s
+                """, (calendar_id, matricolaP, ora, data))
+
         db.commit()
 
         query_nome = """
@@ -1053,6 +1082,20 @@ def delete_lezione_tutor():
         db = get_db()
         cursor = db.cursor()
 
+        # First, get the calendar event ID if it exists
+        cursor.execute("""
+            SELECT google_calendar_id 
+            FROM Lezioni 
+            WHERE matricolaP = %s AND data = %s AND ora = %s
+        """, (matricolaP, data, ora))
+        result = cursor.fetchone()
+        
+        # If there's a calendar event, delete it
+        if result and result['google_calendar_id'] and 'google_token' in session:
+            calendar_manager = GoogleCalendarManager(session['google_token'])
+            calendar_manager.delete_event(result['google_calendar_id'])
+        
+
         query_nome = """
                 SELECT nome, cognome, classe
                 FROM Studenti
@@ -1127,6 +1170,20 @@ def delete_lezione_tutee():
     try:
         db = get_db()
         cursor = db.cursor()
+
+        # First, get the calendar event ID if it exists
+        cursor.execute("""
+            SELECT google_calendar_id 
+            FROM Lezioni 
+            WHERE matricolaP = %s AND data = %s AND ora = %s
+        """, (matricolaP, data, ora))
+        result = cursor.fetchone()
+        
+        # If there's a calendar event, delete it
+        if result and result['google_calendar_id'] and 'google_token' in session:
+            calendar_manager = GoogleCalendarManager(session['google_token'])
+            calendar_manager.delete_event(result['google_calendar_id'])
+        
         
         # prendi i nomi dei tutor e tutee
         query_nome = """
@@ -1156,7 +1213,7 @@ def delete_lezione_tutee():
         cursor = db.cursor()
         query = """
             UPDATE Lezioni
-            SET matricolaT = NULL, materiaL = NULL, argomenti = NULL, aulaL = NULL
+            SET matricolaT = NULL, materiaL = NULL, argomenti = NULL, aulaL = NULL, google_calendar_id = NULL
             WHERE matricolaT = %s AND data = %s AND ora = %s AND DATE(data) >= CURDATE()
         """
         cursor.execute(query, (matricolaT, data, ora))
@@ -1354,8 +1411,6 @@ def send_email(recipients, subject, message):
         return jsonify({"message": "Email sent successfully"}), 200
     except Exception as e:
         print(f"An error occurred: {e}")
-        print(recipients)
-        print(msg)
         return jsonify({"error": "Internal server error"}), 500
 
 def get_destinatari(matricola):
