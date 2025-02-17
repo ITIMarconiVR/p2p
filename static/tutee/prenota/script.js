@@ -207,9 +207,12 @@ function createCalendar(matricola, fetchUrl) {
 async function showPrenotaLezione(info) {
     const now = new Date();
     // add 2 days to the current date
-    now.setDate(now.getDate() + 2);
+    //now.setDate(now.getDate() + 1);
+    //LLL aggiunge sei ore limite delle 18.00 del giorno precedente
+    // info.event.start punta allamezzanotte
+    now.setHours(now.getHours()+5)
     if (info.event.start <= now) {
-        alert('Puoi prenotare lezioni con minimo due giorni di anticipo.');
+        alert('Puoi prenotare lezioni fino alle 19.00 del giorno precedente.');
         return;
     }
     const tuteeAvailable = await tuteeHasLesson(info);
