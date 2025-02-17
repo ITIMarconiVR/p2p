@@ -758,7 +758,7 @@ def reserve_event():
         query = """
             UPDATE Lezioni
             SET matricolaT = %s , materiaL = %s, argomenti = %s
-            WHERE matricolaP = %s AND ora = %s AND data = %s and data>=DATE_ADD(CURDATE(), INTERVAL 2 DAY)
+            WHERE matricolaP = %s AND ora = %s AND data = %s and data>=DATE_ADD(CURDATE(), INTERVAL 1 DAY)
         """
         cursor.execute(query, (matricolaT, materiaL, argomenti, matricolaP, ora, data))
 
