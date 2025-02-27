@@ -65,10 +65,10 @@ Session(app)
 
 
 # ------------------------------------------------------------------------------
-# variabili
+# utenti speciali
 admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI', 'peerTopeer Marconi']
 resp_mail = 'claudia.carletti@marconiverona.edu.it'
-centraline = [''] # TODO: capire che fare
+centraline = ['PAOLA LAVAGNOLI', 'LUISELLA CARLI', 'PALMINA GIANNETTO'] 
 
 
 # ------------------------------------------------------------------------------
@@ -157,7 +157,6 @@ def login():
     #LLLreturn redirect(request_uri)
 
     # Salva lo stato nella sessione per la protezione CSRF ???
-    print(session)
     session['oauth_state'] = state
 
     return redirect(request_uri)
@@ -359,9 +358,9 @@ def schedule_cleanup():
     scheduler.add_job(cleanup_old_sessions, 'interval', days=1)
     scheduler.start()
 
-@app.before_first_request
-def init_app():
-    schedule_cleanup()
+# @app.before_first_request
+# def init_app():
+#     schedule_cleanup()
 
 
 @app.route("/logout")
@@ -581,22 +580,23 @@ def get_lezioni_cancellate(matricolaP, distLezione, prenotata):
             return jsonify({"error": "Attributi mancanti: matricolaP"}), 400
         
         where_statement = """"""
+        parameters = []
         if prenotata is not None:
             if prenotata:
                 where_statement += "matricolaT IS NOT NULL AND "
         elif distLezione is not None:
             where_statement += """DATEDIFF(data, deleteDateTime) >= %s AND """
+            parameters.append(distLezione)
         where_statement += "matricolaP = %s"
+        parameters.append(matricolaP)
 
         query = f"""
             SELECT *
             FROM LezioniCancellate
             WHERE {where_statement}
         """
-        if distLezione is not None:
-            cursor.execute(query, (distLezione, matricolaP))
-        else:
-            cursor.execute(query, (matricolaP,))
+        
+        cursor.execute(query, parameters)
         events = cursor.fetchall()          
         return jsonify(events), 200
     except Exception as e:
@@ -750,7 +750,7 @@ def reserve_event():
         query = """
             UPDATE Lezioni
             SET matricolaT = %s , materiaL = %s, argomenti = %s
-            WHERE matricolaP = %s AND ora = %s AND data = %s and data>=DATE_ADD(CURDATE(), INTERVAL 2 DAY)
+            WHERE matricolaP = %s AND ora = %s AND data = %s and data>=DATE_ADD(CURDATE(), INTERVAL 1 DAY)
         """
         
         cursor.execute(query, (matricolaT, materiaL, argomenti, matricolaP, ora, data))
@@ -1391,5 +1391,5 @@ def get_destinatari(matricola):
 
 if __name__ == "__main__":
     # Run initial cleanup
-    cleanup_old_sessions()
+    # cleanup_old_sessions()
     app.run(ssl_context="adhoc",host='0.0.0.0', port=5000, debug=True)

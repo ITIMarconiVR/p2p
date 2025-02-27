@@ -98,9 +98,11 @@ function handleAddTutor() {
     .catch(error => alert('Errore durante l\'aggiunta del tutor.'));
 }
 
-function seeTutorInfo(tutor) {
+async function seeTutorInfo(tutor) {
     const modal = document.getElementById('modal-overlay');
     document.getElementById('modal-header').textContent = `Informazioni sul tutor ${tutor.nome} ${tutor.cognome}`;
+    document.getElementById('modal-text').innerHTML = `Matricola: ${tutor.matricolaP}<br>Nome: ${tutor.nome}<br>Cognome: ${tutor.cognome}<br>Classe: ${tutor.classe}`;
+
 
     // lista materie insegnate dal tutor
     const materieList = document.getElementById('materie-list');
@@ -109,14 +111,19 @@ function seeTutorInfo(tutor) {
 
     // numero lezioni cancellate dal tutor che erano prenotate e sono state cancellate a meno di due giorni dalla data della lezione
     const meno2g_prenotate = document.getElementById('meno2g_prenotate');
-    meno2g_prenotate.innerHTML = '';
-    statisticheTutor(tutor.matricolaP, 2, 1);
-    
+    nLez = await statisticheTutor(tutor.matricolaP, 2, 1);
+    console.log(nLez);
+    meno2g_prenotate.innerHTML = 'A meno di due giorni e prenotate: ' + nLez;
 
+    // numero lezioni cancellate dal tutor che erano prenotate
+    prenotate = document.getElementById('prenotate');
+    nLez = await statisticheTutor(tutor.matricolaP, null, 1);
+    prenotate.innerHTML = 'Prenotate: ' + nLez;
 
-
-
-    document.getElementById('modal-text').innerHTML = `Matricola: ${tutor.matricolaP}<br>Nome: ${tutor.nome}<br>Cognome: ${tutor.cognome}<br>Classe: ${tutor.classe}`;
+    // numero lezioni cancellate dal tutor in tutto
+    totali = document.getElementById('totali');
+    nLez = await statisticheTutor(tutor.matricolaP);
+    totali.innerHTML = 'Totali: ' + nLez;   
 
     modal.style.display = 'flex';
 }
@@ -131,10 +138,13 @@ function addMaterieInsegnate(matricola, list) {
         .catch(error => console.error('Error fetching materie:', error));
 }
 
-function statisticheTutor(matricola, distLezione=null, prenotata=0) {
-    fetch(`/lezioni_cancellate/${matricola}/${distLezione}/${prenotata}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
+async function statisticheTutor(matricola, distLezione = null, prenotata = 0) {
+    try {
+        const response = await fetch(`/lezioni_cancellate/${matricola}/${distLezione}/${prenotata}`);
+        const data = await response.json();
+        return data.length;
+    } catch (error) {
+        console.error('Error fetching statistiche:', error);
+        return 0; // Return 0 in case of error
+    }
 }
