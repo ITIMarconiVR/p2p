@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centralino - Lezioni di oggi</title>
     <link rel="stylesheet" href="/html/centralino/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
 </head>
 <body>
     <header>
@@ -20,9 +23,12 @@
 
     <h1 id="titolo">Lezioni di oggi</h1>
 
-    <div>
-        <button id="prev-day">&larr; Giorno precedente</button>
-        <button id="next-day">Giorno successivo &rarr;</button>
+    <div id="change-day">
+        <div>
+            <button id="prev-day">&larr; Giorno precedente</button>
+            <button id="next-day">Giorno successivo &rarr;</button>
+        </div>
+        <button id="pdf-button">Esporta PDF</button>
     </div>
 
     <h2>Lezioni alle 13.40</h2>

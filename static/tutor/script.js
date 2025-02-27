@@ -50,11 +50,11 @@ async function populateLessonLists(future, pastReserved) {
 
                 const li = document.createElement('li');
                 if (date < new Date()) {
-                    li.textContent = `Lezione ${dateFormatted} alle ${event.ora === 2 ? '14:30' : '13:40'} con ${event.matricolaT}: ${event.nomeT} ${event.cognomeT}`;
+                    li.innerHTML = `Lezione ${dateFormatted} alle ${event.ora === 2 ? '14:30' : '13:40'} con ${event.matricolaT}: ${event.nomeT} ${event.cognomeT}`;
                     heldList.appendChild(li);   
                 } else {
                     if (event.matricolaT !== null) {
-                        li.textContent = `Lezione in programma ${dateFormatted} alle ${event.ora === 2 ? '14:30' : '13:40'} con ${event.matricolaT}: ${event.nomeT} ${event.cognomeT}`;
+                        li.innerHTML = `Lezione in programma <b>${dateFormatted}</b> alle <b>${event.ora === 2 ? '14:30' : '13:40'}</b> con ${event.matricolaT}: <b>${event.nomeT} ${event.cognomeT}</b> <br> <b>${event.materiaL}</b>: ${event.argomenti}`;
                         scheduledList.appendChild(li);
                     }
                 }
