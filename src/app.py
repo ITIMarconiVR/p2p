@@ -254,10 +254,10 @@ def callback():
         # session["tipo"] = "docente"
         # return redirect("/loginDocenti")
 
-        fakeAdmins = ["19894"]
-        if session["mail"][:5] in fakeAdmins:
-            session["tipo"] = "docente"
-            return redirect("/loginDocenti")
+        # fakeAdmins = ["19894"]
+        # if session["mail"][:5] in fakeAdmins:
+        #     session["tipo"] = "docente"
+        #     return redirect("/loginDocenti")
 
         # session["tipo"] = "centralino"
         # return redirect("/loginCentraline")
@@ -762,27 +762,36 @@ def reserve_event():
         """
         cursor.execute(query, (matricolaT, materiaL, argomenti, matricolaP, ora, data))
 
+        # If database update was successful, create calendar event
         if cursor.rowcount > 0 and 'google_token' in session:
-            calendar_manager = GoogleCalendarManager(session['google_token'])
-            
-            event_details = {
-                'data': data,
-                'ora': ora,
-                'materiaL': materiaL,
-                'argomenti': argomenti,
-                'matricolaT': matricolaT,
-                'matricolaP': matricolaP
-            }
-            
-            success, calendar_id = calendar_manager.create_lesson_event(event_details)
-            if success:
-                # Store the calendar event ID
-                cursor.execute("""
-                    UPDATE Lezioni 
-                    SET google_calendar_id = %s
-                    WHERE matricolaP = %s AND ora = %s AND data = %s
-                """, (calendar_id, matricolaP, ora, data))
-
+            try:
+                # Initialize the calendar manager
+                calendar_manager = GoogleCalendarManager(session['google_token'])
+                
+                # Prepare event details
+                event_details = {
+                    'data': data,
+                    'ora': ora,
+                    'materiaL': materiaL,
+                    'argomenti': argomenti,
+                    'matricolaT': matricolaT,
+                    'matricolaP': matricolaP,
+                    'aulaL': None  # Add classroom info if available
+                }
+                
+                # Create the calendar event
+                success, calendar_id = calendar_manager.create_lesson_event(event_details)
+                if success:
+                    # Store the calendar event ID in the database
+                    cursor.execute("""
+                        UPDATE Lezioni 
+                        SET google_calendar_id = %s
+                        WHERE matricolaP = %s AND ora = %s AND data = %s
+                    """, (calendar_id, matricolaP, ora, data))
+            except Exception as e:
+                print(f"Calendar error: {e}")
+                # Continue with reservation even if calendar fails
+        
         db.commit()
 
         query_nome = """
@@ -1080,21 +1089,7 @@ def delete_lezione_tutor():
     
     try:
         db = get_db()
-        cursor = db.cursor()
-
-        # First, get the calendar event ID if it exists
-        cursor.execute("""
-            SELECT google_calendar_id 
-            FROM Lezioni 
-            WHERE matricolaP = %s AND data = %s AND ora = %s
-        """, (matricolaP, data, ora))
-        result = cursor.fetchone()
-        
-        # If there's a calendar event, delete it
-        if result and result['google_calendar_id'] and 'google_token' in session:
-            calendar_manager = GoogleCalendarManager(session['google_token'])
-            calendar_manager.delete_event(result['google_calendar_id'])
-        
+        cursor = db.cursor()        
 
         query_nome = """
                 SELECT nome, cognome, classe
@@ -1107,9 +1102,24 @@ def delete_lezione_tutor():
             cursor.execute(query_nome, (matricolaT, ))
             nome_cognT = cursor.fetchone()
 
+            
+
+        # First, get the calendar event ID if it exists+
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT google_calendar_id 
+            FROM Lezioni 
+            WHERE matricolaP = %s AND data = %s AND ora = %s
+        """, (matricolaP, data, ora))
+        result = cursor.fetchone()
+        
+        # If there's a calendar event, delete it
+        if result and result['google_calendar_id'] and 'google_token' in session:
+            calendar_manager = GoogleCalendarManager(session['google_token'])
+            calendar_manager.delete_event(result['google_calendar_id'])
+
         
         # prendo i dati della lezione da cancellare e li metto nella tabella delle lezioni rimosse per tenerne traccia
-        cursor = db.cursor(dictionary=True)
         query_get = """SELECT * FROM Lezioni WHERE matricolaP = %s AND data = %s AND ora = %s"""
         cursor.execute(query_get, (matricolaP, data, ora))
         lezione = cursor.fetchone()
@@ -1162,7 +1172,7 @@ def delete_lezione_tutee():
     data = request.json.get('data')
     ora = request.json.get('ora')
 
-    if not matricolaP or not data or not ora:
+    if not all([matricolaP, data, ora, matricolaT]):
         return jsonify({"error": "Attributes are required"}), 400
     if matricolaT!=session["mail"][:5]:
         return jsonify({"error": "Non sei autorizzato"}), 401
@@ -1171,21 +1181,30 @@ def delete_lezione_tutee():
         db = get_db()
         cursor = db.cursor()
 
-        # First, get the calendar event ID if it exists
-        cursor.execute("""
-            SELECT google_calendar_id 
+        
+        # Get calendar information first
+        cursor = db.cursor(dictionary=True)  # Use dictionary cursor for this query
+        query_calendar = """
+            SELECT google_calendar_id
             FROM Lezioni 
             WHERE matricolaP = %s AND data = %s AND ora = %s
-        """, (matricolaP, data, ora))
-        result = cursor.fetchone()
-        
-        # If there's a calendar event, delete it
-        if result and result['google_calendar_id'] and 'google_token' in session:
-            calendar_manager = GoogleCalendarManager(session['google_token'])
-            calendar_manager.delete_event(result['google_calendar_id'])
+        """
+        cursor.execute(query_calendar, (matricolaP, data, ora))
+        calendar_result = cursor.fetchone()
+
+        # Handle calendar deletion if needed
+        if calendar_result and calendar_result['google_calendar_id'] and 'google_token' in session:
+            try:
+                calendar_manager = GoogleCalendarManager(session['google_token'])
+                calendar_manager.delete_event(calendar_result['google_calendar_id'])
+            except Exception as e:
+                print(f"Calendar deletion error: {e}")
+                # Continue with database update even if calendar deletion fails
+
         
         
         # prendi i nomi dei tutor e tutee
+        cursor = db.cursor()
         query_nome = """
                 SELECT nome, cognome, classe
                 FROM Studenti
@@ -1425,24 +1444,39 @@ def get_destinatari(matricola):
         cursor.execute(query, (matricola,))
         user = cursor.fetchone()
 
+        if not user:
+            return []
+
         destinatari = []
+        
+        # Parse date parts from DD/MM/YYYY format
         year = user['data_nascita'][6:]
         month = user['data_nascita'][3:5]
         day = user['data_nascita'][:2]
-        age = datetime.date(year=int(year), month=int(month), day=int(day))
-        today = datetime.date.today()
-        if (relativedelta(today, age).years < 18):
-            if user['emailgenitore1']==user['emailgenitore2']:
-                destinatari.append('emailgenitore1')
+        
+        # Create birth date using datetime
+        birth_date = datetime(int(year), int(month), int(day)).date()
+        today = datetime.now().date()
+        
+        # Check age
+        if (relativedelta(today, birth_date).years < 18):
+            if user['emailgenitore1'] == user['emailgenitore2']:
+                if user['emailgenitore1']:  # Check if not None/empty
+                    destinatari.append(user['emailgenitore1'])  # Use actual email, not string 'emailgenitore1'
             else:
-                destinatari.append(user['emailgenitore1'])
-                destinatari.append(user['emailgenitore2'])
-        destinatari.append(user['email'])
+                if user['emailgenitore1']:  # Check if not None/empty
+                    destinatari.append(user['emailgenitore1'])
+                if user['emailgenitore2']:  # Check if not None/empty
+                    destinatari.append(user['emailgenitore2'])
+        
+        if user['email']:  # Check if not None/empty
+            destinatari.append(user['email'])
 
         return destinatari
+        
     except Exception as e:
         print("error:", e)
-        return jsonify({"error": "error while fetching user data"}), 401
+        return []  # Return empty list instead of jsonify on error
 
 if __name__ == "__main__":
     # Run initial cleanup

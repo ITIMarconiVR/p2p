@@ -1,6 +1,7 @@
 from requests_oauthlib import OAuth2Session
 from googleapiclient.discovery import build
 from datetime import datetime, timedelta
+from google.oauth2.credentials import Credentials
 
 
 GOOGLE_CLIENT_ID="717588494889-3ecmb3rfivadscacgnj98cpd7d7ko0ar.apps.googleusercontent.com"
@@ -12,43 +13,64 @@ class GoogleCalendarManager:
         """
         Initialize the calendar manager with OAuth token
         """
-        self.oauth_session = OAuth2Session(GOOGLE_CLIENT_ID)
-        self.oauth_session.token = google_token
-        
-        # Create service
-        credentials = {
-            'token': google_token['access_token'],
-            'refresh_token': google_token.get('refresh_token'),
-            'token_uri': 'https://oauth2.googleapis.com/token',
-            'client_id': GOOGLE_CLIENT_ID,
-            'client_secret': GOOGLE_CLIENT_SECRET,
-        }
-        self.service = build('calendar', 'v3', credentials=credentials)
+        try:
+            credentials = Credentials(
+                token=google_token['access_token'],
+                refresh_token=None,
+                token_uri='https://oauth2.googleapis.com/token',
+                client_id=GOOGLE_CLIENT_ID,
+                client_secret=GOOGLE_CLIENT_SECRET,
+                scopes=google_token['scope']
+            )
+            
+            self.service = build('calendar', 'v3', credentials=credentials)
+            
+        except Exception as e:
+            print(f"Error initializing calendar manager: {e}")
+            raise
 
     def create_lesson_event(self, event_details):
         """
-        Create a calendar event for a lesson
+        Create a calendar event for a lesson in the primary calendars
         """
         try:
-            # Convert time format
-            start_time = datetime.strptime(event_details['data'], '%Y-%m-%d')
-            if event_details['ora'] == 1:
-                start_time = start_time.replace(hour=13, minute=40)
-            else:  # ora == 2
-                start_time = start_time.replace(hour=14, minute=30)
+            # Parse date
+            try:
+                if isinstance(event_details['data'], str):
+                    start_time = datetime.strptime(event_details['data'], '%Y-%m-%d')
+                else:
+                    start_time = event_details['data']
+            except ValueError as e:
+                print(f"Date parsing error: {e}")
+                return False, "Invalid date format"
+
+            # Parse time
+            try:
+                ora = int(event_details['ora'])
+                if ora == 1:
+                    start_time = start_time.replace(hour=13, minute=40)
+                else:  # ora == 2
+                    start_time = start_time.replace(hour=14, minute=30)
+            except ValueError as e:
+                print(f"Time parsing error: {e}")
+                return False, "Invalid time format"
             
             end_time = start_time + timedelta(minutes=50)
 
             # Create attendee list
             attendees = []
+            
             if event_details.get('matricolaT'):
+                tutee_email = f"{event_details['matricolaT']}@studenti.marconiverona.edu.it"
                 attendees.append({
-                    'email': f"{event_details['matricolaT']}@studenti.marconiverona.edu.it",
+                    'email': tutee_email,
                     'responseStatus': 'accepted'
                 })
+            
             if event_details.get('matricolaP'):
+                tutor_email = f"{event_details['matricolaP']}@studenti.marconiverona.edu.it"
                 attendees.append({
-                    'email': f"{event_details['matricolaP']}@studenti.marconiverona.edu.it",
+                    'email': tutor_email,
                     'responseStatus': 'accepted'
                 })
 
@@ -57,7 +79,9 @@ class GoogleCalendarManager:
                 'location': event_details.get('aulaL', 'TBD'),
                 'description': (
                     f"Materia: {event_details.get('materiaL', '')}\n"
-                    f"Argomenti: {event_details.get('argomenti', '')}\n"
+                    f"Argomenti: {event_details.get('argomenti', '')}\n\n"
+                    f"ATTENZIONE: L'eliminazione dell'evento dal calendario non comporta la cancellazione della lezione.\n"
+                    f"Per cancellare la lezione è necessario utilizzare l'applicazione P2P."
                 ),
                 'start': {
                     'dateTime': start_time.isoformat(),
@@ -75,17 +99,43 @@ class GoogleCalendarManager:
                         {'method': 'popup', 'minutes': 30},
                     ],
                 },
-                'guestsCanModify': False,
-                'guestsCanInviteOthers': False,
+                'colorId': '3',  # Dark purple color
+                'guestsCanModify': False,  # Prevent attendees from modifying
+                'guestsCanInviteOthers': False,  # Prevent inviting others
+                'guestsCanSeeOtherGuests': True  # Allow seeing other attendees
             }
 
-            # Create the event and send emails to all attendees
+            # Create the event in primary calendar
             created_event = self.service.events().insert(
-                calendarId='primary',
-                body=event
+                calendarId='primary',  # Use primary calendar
+                body=event,
+                sendUpdates='none',  # Don't send updates to attendees
+                conferenceDataVersion=0  # Disable conferencing
             ).execute()
 
-            return True, created_event['id']
+            # Make all attendees organizers so they can delete the event
+            # This is a workaround to ensure any participant can delete it
+            try:
+                # Update the event with explicit write access
+                event_patch = {
+                    'guestsCanModify': True,  # This is necessary for deletion to work
+                    'guestsCanInviteOthers': False,
+                    'transparentInvitations': False,
+                    'attendeesOmitted': False
+                }
+                
+                updated_event = self.service.events().patch(
+                    calendarId='primary',
+                    eventId=created_event['id'],
+                    body=event_patch,
+                    sendUpdates='none'  # Don't send updates
+                ).execute()
+                
+                return True, created_event['id']
+            except Exception as e:
+                print(f"Error updating event permissions: {e}")
+                # Still return success since the event was created
+                return True, created_event['id']
 
         except Exception as e:
             print(f"Error creating calendar event: {e}")
@@ -96,10 +146,10 @@ class GoogleCalendarManager:
         Delete a calendar event
         """
         try:
-            # Delete the event and notify all attendees
             self.service.events().delete(
-                calendarId='primary',
-                eventId=event_id
+                calendarId='primary',  # Use primary calendar
+                eventId=event_id,
+                sendUpdates='none'  # Don't send updates to attendees
             ).execute()
             return True
         except Exception as e:
