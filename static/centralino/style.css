@@ -67,3 +67,10 @@ table tr:nth-child(even) {
 table tr:hover {
     background-color: #dfdfdf;
 }
+
+
+#change-day{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

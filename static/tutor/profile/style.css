@@ -59,6 +59,10 @@ main {
     width: 20px !important;
 }
 
+section{
+    width: 100%;
+}
+
 /* Button */
 button {
     width: 200px;
