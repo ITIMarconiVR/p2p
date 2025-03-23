@@ -2,3 +2,4 @@
 */sessions
 */log
 .venv
+__pycache__/
