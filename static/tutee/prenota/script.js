@@ -279,6 +279,10 @@ async function confirmLesson(info) {
         alert('Inserisci gli argomenti della lezione.');
         return;
     }
+    if(argomenti.length >= 100){
+        alert('Gli argomenti della lezione devono essere al massimo 100 caratteri.\nNe hai inseriti: ' + argomenti.length);
+        return;
+    }
     try {
         const response = await fetch('/prenota', {
             method: 'POST',
