@@ -48,7 +48,8 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'p2p@marconiverona.edu.it'
-app.config['MAIL_PASSWORD'] = 'P2p2025$'
+app.config['MAIL_PASSWORD'] = 'vbdg nyqk opit qkfb'  #'P2p2025$'
+
 app.config['MAIL_DEFAULT_SENDER'] = 'p2p@marconiverona.edu.it'
 app.config['MAIL_DEBUG'] = False
 
@@ -1429,7 +1430,7 @@ def send_email(recipients, subject, message):
 
         return jsonify({"message": "Email sent successfully"}), 200
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"SendMailAn error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
 def get_destinatari(matricola):
