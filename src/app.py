@@ -151,7 +151,12 @@ def login():
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=request.base_url + "/callback",
-        scope=["openid", "email", "profile", "https://www.googleapis.com/auth/calendar"],
+        scope=["openid", 
+               "email", 
+               "profile", 
+               "https://www.googleapis.com/auth/calendar",
+               "https://www.googleapis.com/auth/admin.directory.group.readonly"
+               ],
         state=state
     )
     #LLLprint("request_uri login", request_uri)
@@ -790,32 +795,36 @@ def reserve_event():
                     """, (calendar_id, matricolaP, ora, data))
             except Exception as e:
                 print(f"Calendar error: {e}")
-                # Continue with reservation even if calendar fails
-        
-        db.commit()
 
-        query_nome = """
-                SELECT nome, cognome, classe
-                FROM Studenti
-                WHERE matricola = %s
-            """
-        cursor.execute(query_nome, (matricolaP, ))
-        nome_cognP = cursor.fetchone()
-        cursor.execute(query_nome, (matricolaT, ))
-        nome_cognT = cursor.fetchone()
+            
+            query_nome = """
+                    SELECT nome, cognome, classe
+                    FROM Studenti
+                    WHERE matricola = %s
+                """
+            cursor.execute(query_nome, (matricolaP, ))
+            nome_cognP = cursor.fetchone()
+            cursor.execute(query_nome, (matricolaT, ))
+            nome_cognT = cursor.fetchone()
 
-        dest = get_destinatari(matricolaP)
-        if matricolaT is not None:
-            destT = get_destinatari(matricolaT)
-            for des in destT:
-                dest.append(des)
-        if ora==1:
-            ora="13:40"
-        elif ora==2:
-            ora="14:30"
-        message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} è stata prenotata dal tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}.\nMateria: {materiaL}\nArgomenti: {argomenti}"""
-        send_email(dest, "Lezione prenotata", message)
-        return jsonify({"message": "Event reserved successfully"}), 200
+            dest = get_destinatari(matricolaP)
+            if matricolaT is not None:
+                destT = get_destinatari(matricolaT)
+                for des in destT:
+                    dest.append(des)
+            if ora==1:
+                ora="13:40"
+            elif ora==2:
+                ora="14:30"
+            message = f"""La lezione del giorno {data} alle ore {ora} con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} è stata prenotata dal tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}.\nMateria: {materiaL}\nArgomenti: {argomenti}"""
+            send_email(dest, "Lezione prenotata", message)
+            db.commit()
+            
+            return jsonify({"message": "Event reserved successfully"}), 200
+        else:
+            print(f"An error occurred: {e}")
+            return jsonify({"error": "Internal server error "+e}), 500
+
     except Exception as e:
         print(f"An error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
@@ -1391,7 +1400,8 @@ def get_lezioni_per_materia():
             L.validata = 1 AND
             MI.idMat LIKE %s AND
             S1.classe LIKE %s AND
-            S1.classe LIKE %s
+            S1.classe LIKE %s AND
+            L.data > CURDATE()
         """
 
         if idMat == 'ALL':
