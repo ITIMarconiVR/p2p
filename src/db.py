@@ -6,14 +6,17 @@ email_cred = {
     'password': 'p2p2025'
 }
 db_cred = {
-    'host': 'localhost',
+    'host': '172.16.1.98',
     'user': 'p2p',
     'password': 'p2p2025',
-    'database': 'p2p'
+    'database': 'p2pdev'
 }
+
 def get_db():
     if 'db' not in g:
+        #print("CONNECT")
         g.db = mysql.connector.connect(
+            host=db_cred['host'],
             user=db_cred['user'],
             password=db_cred['password'],
             database=db_cred['database'],

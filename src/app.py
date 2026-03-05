@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
-from flask import Flask, request, jsonify, redirect, session, send_from_directory, render_template, escape
+from flask import Flask, request, jsonify, redirect, session, send_from_directory, render_template
+from markupsafe import escape
 #from flask_cors import CORS
 from flask_session import Session
 from db import get_db
@@ -193,6 +194,7 @@ def callback():
 
     try:
         db = get_db()
+        #print("DOPO getdb")
         cursor = db.cursor(dictionary=True)
         # se le info non sono in tabella aggiungi
         cursor.execute("select * from utentiws where id = %s ",(unique_id,))
