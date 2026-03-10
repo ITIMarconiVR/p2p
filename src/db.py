@@ -6,10 +6,10 @@ email_cred = {
     'password': 'p2p2025'
 }
 db_cred = {
-    'host': '172.16.1.98',
-    'user': 'p2p',
-    'password': 'p2p2025',
-    'database': 'p2pdev'
+    'host': 'localhost',
+    'user': 'root',
+    'password': 'r00tP@ss',
+    'database': 'p2p'
 }
 
 def get_db():

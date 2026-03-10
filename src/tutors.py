@@ -94,9 +94,10 @@ def get_tutors():
         db = get_db()
         cursor = db.cursor(dictionary=True)
         cursor.execute("""
-            SELECT P.matricolaP, S.nome, S.cognome, S.classe
-            FROM Peer P, Studenti S
-            WHERE P.matricolaP = S.matricola
+            SELECT P.matricolaP, S.nome, S.cognome, S.classe, COUNT(L.matricolaT) AS lezioni
+            FROM Peer AS P LEFT JOIN Lezioni AS L ON P.matricolaP = L.matricolaP
+            JOIN Studenti AS S ON P.matricolaP = S.matricola
+            GROUP BY P.matricolaP, S.nome, S.cognome, S.classe
             ORDER BY S.classe
         """)
         return jsonify(cursor.fetchall()), 200

@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${tutor.nome}</td>
                     <td>${tutor.cognome}</td>
                     <td>${tutor.classe}</td>
+                    <td>${tutor.lezioni}</td>
                     <td><button class="delete-button">Elimina</button></td>
                 `;
                 row.addEventListener('click', () => seeTutorInfo(tutor));
