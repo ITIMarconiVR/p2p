@@ -4,6 +4,7 @@ app.py  –  Entry-point dell'applicazione P2P Marconi.
 Il file crea l'istanza Flask tramite la factory `create_app` definita in
 config.py e registra tutti i Blueprint (uno per dominio).
 """
+import os
 from config import create_app
 from auth import auth_bp
 from routes_static import static_bp
@@ -25,4 +26,5 @@ app.register_blueprint(materie_bp)
 
 
 if __name__ == "__main__":
-    app.run(ssl_context="adhoc", host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get("PORT", 8010))
+    app.run(host='0.0.0.0', port=port, debug=True)

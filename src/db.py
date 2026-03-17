@@ -1,15 +1,20 @@
+import os
 import mysql.connector
 from flask import g
-#from cred import db_cred
+
 email_cred = {
     'email': 'p2p@marconiverona.edu.it',
     'password': 'p2p2025'
 }
+
+# Le credenziali vengono lette dalle variabili d'ambiente impostate in
+# docker-compose.yml. I valori di default permettono di eseguire l'app
+# anche fuori da Docker (es. sviluppo locale diretto).
 db_cred = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'r00tP@ss',
-    'database': 'p2p'
+    'host':     os.environ.get('DB_HOST',     '172.16.1.98'),
+    'user':     os.environ.get('DB_USER',     'p2p'),
+    'password': os.environ.get('DB_PASSWORD', 'p2p2025'),
+    'database': os.environ.get('DB_NAME',     'p2pdev'),
 }
 
 def get_db():

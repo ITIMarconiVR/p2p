@@ -1,0 +1,70 @@
+services:
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Container MySQL 8.0 (stessa versione del server di produzione: 8.0.27)
+  # ────────────────────────────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: p2p_db
+
+    # Variabili d'ambiente lette da db.py (user=p2p, password=p2p2025, database=p2pdev)
+    environment:
+      MYSQL_ROOT_PASSWORD: rootp2p2025        # password per l'utente root (solo uso interno)
+      MYSQL_DATABASE: p2pdev                  # nome del database creato all'avvio
+      MYSQL_USER: p2p                         # utente applicativo
+      MYSQL_PASSWORD: p2p2025                 # password utente applicativo
+
+    # Named volume: i dati di MySQL sopravvivono alla rimozione del container
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Opzionale: monta lo schema SQL nella cartella di init di MySQL.
+      # Tutti i file .sql presenti in /docker-entrypoint-initdb.d/ vengono
+      # eseguiti automaticamente alla prima creazione del database.
+      - ./DOC/db_struct.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+
+    ports:
+      - "3306:3306"   # espone MySQL sull'host (utile per client come DBeaver)
+
+    # Usa mysql_native_password per compatibilità con mysql-connector-python
+    command: --default-authentication-plugin=mysql_native_password
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "p2p", "-pp2p2025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Container Flask (applicazione Python)
+  # ────────────────────────────────────────────────────────────────────────────
+  web:
+    build: .                          # usa il Dockerfile nella root del progetto
+    container_name: p2p_web
+    depends_on:
+      db:
+        condition: service_healthy    # aspetta che MySQL sia pronto prima di avviare Flask
+
+    # Variabili d'ambiente per la connessione al database.
+    # Corrispondono esattamente alle chiavi lette in db.py.
+    # Il nome host è il nome del servizio Docker ("db"), non l'IP fisico.
+    environment:
+      DB_HOST: db
+      DB_USER: p2p
+      DB_PASSWORD: p2p2025
+      DB_NAME: p2pdev
+
+    ports:
+      - "8010:8010"   # mappa la porta Flask sull'host
+
+    # Bind mount per lo sviluppo in tempo reale:
+    # qualsiasi modifica ai file Python sull'host è immediatamente visibile
+    # all'interno del container, senza dover ricostruire l'immagine.
+    volumes:
+      - ./src:/app/src
+      - ./static:/app/static
+
+# ────────────────────────────────────────────────────────────────────────────
+# Named volume per la persistenza dei dati MySQL
+# ────────────────────────────────────────────────────────────────────────────
+volumes:
+  mysql_data:

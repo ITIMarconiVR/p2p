@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/tutors')
         .then(response => response.json())
         .then(data => {
+            let totalLezioni = 0;
             data.forEach(tutor => {
+                totalLezioni += Number(tutor.lezioni) || 0;
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${tutor.matricolaP}</td>
@@ -35,6 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 tutorsTableBody.appendChild(row);
             });
+
+            // Add total row
+            const totalRow = document.createElement('tr');
+            totalRow.style.fontWeight = 'bold';
+            totalRow.innerHTML = `
+                <td colspan="4" style="text-align: right;">Totale Lezioni:</td>
+                <td>${totalLezioni}</td>
+                <td></td>
+            `;
+            tutorsTableBody.appendChild(totalRow);
         })
         .catch(error => console.error('Error fetching tutors:', error));
 
