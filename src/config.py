@@ -11,6 +11,10 @@ from flask_session import Session
 from flask_login import LoginManager
 
 # ------------------------------------------------------------------------------
+# App Version
+VERSION = "1.0.0"
+
+# ------------------------------------------------------------------------------
 # Google OAuth
 GOOGLE_CLIENT_ID = "717588494889-3ecmb3rfivadscacgnj98cpd7d7ko0ar.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "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"
@@ -33,6 +37,7 @@ def create_app():
     app = Flask(__name__)
 
     app.config['DEBUG'] = True
+    app.config['VERSION'] = VERSION
     app.config['SECRET_KEY'] = "qwerasdzxc123098poi__#@[]"
     app.config['BASE_DIR'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     app.config['UPLOAD_FOLDER'] = app.config['BASE_DIR'] + '/import'
