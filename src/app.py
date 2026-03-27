@@ -12,9 +12,12 @@ from users import users_bp
 from tutors import tutors_bp
 from lezioni import lezioni_bp
 from materie import materie_bp
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Crea e configura l'app
 app = create_app()
+# Subito dopo aver creato l'app:
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 # Registra i Blueprint
 app.register_blueprint(auth_bp)

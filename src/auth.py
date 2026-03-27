@@ -5,7 +5,7 @@ Blueprint per l'autenticazione Google OAuth 2.0.
 import os
 import requests
 
-from flask import Blueprint, request, jsonify, redirect, session
+from flask import Blueprint, request, jsonify, redirect, session, url_for
 from flask_login import login_user, logout_user, login_required
 
 from oauthlib.oauth2 import WebApplicationClient
@@ -47,12 +47,14 @@ def login():
     client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
     state = os.urandom(16).hex()
+
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=request.base_url + "/callback",
         scope=["openid", "email", "profile", "https://www.googleapis.com/auth/calendar"],
         state=state
     )
+
     session['oauth_state'] = state
     return redirect(request_uri)
 
@@ -63,6 +65,8 @@ def callback():
     state = request.args.get("state", default=None, type=None)
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
+
+
 
     oauth_session = OAuth2Session(GOOGLE_CLIENT_ID, state=state, redirect_uri=request.base_url)
     oauth_session.fetch_token(token_endpoint, client_secret=GOOGLE_CLIENT_SECRET,
