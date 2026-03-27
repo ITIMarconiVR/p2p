@@ -40,6 +40,6 @@ COPY static/ ./static/
 EXPOSE 8010
 
 # ─── Comando di avvio ─────────────────────────────────────────────────────────
-# app.py avvia direttamente il server Flask, quindi lanciamo
+# app.py usa ssl_context="adhoc" (pyOpenSSL), quindi lanciamo direttamente
 # python app.py dalla directory src/.
 CMD ["python", "src/app.py"]

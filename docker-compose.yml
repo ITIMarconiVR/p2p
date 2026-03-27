@@ -23,7 +23,7 @@ services:
       - ./DOC/db_struct.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
 
     ports:
-      - "3306:3306"   # espone MySQL sull'host (utile per client come DBeaver)
+      - "13306:3306"   # espone MySQL sull'host (utile per client come DBeaver)
 
     # Usa mysql_native_password per compatibilità con mysql-connector-python
     command: --default-authentication-plugin=mysql_native_password
