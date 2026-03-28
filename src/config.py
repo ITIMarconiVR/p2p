@@ -21,10 +21,12 @@ GOOGLE_CLIENT_SECRET = "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"
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
 # ------------------------------------------------------------------------------
-# Utenti speciali
-admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI', 'peerTopeer Marconi']
+# Utenti speciali 
+admins = ['lorenzo.decarli@marconiverona.edu.it', 'claudia.carletti@marconiverona.edu.it', 'p2p@marconiverona.edu.it']
+#admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI', 'peerTopeer Marconi']
 resp_mail = 'claudia.carletti@marconiverona.edu.it'
-centraline = ['PAOLA LAVAGNOLI', 'LUISELLA CARLI', 'PALMINA GIANNETTO']
+centraline = ['paola.lavagnoli@marconiverona.edu.it', 'luisella.carli@marconiverona.edu.it', 'palmina.giannetto@marconiverona.edu.it']
+#centraline = ['PAOLA LAVAGNOLI', 'LUISELLA CARLI', 'PALMINA GIANNETTO']
 
 # ------------------------------------------------------------------------------
 # Istanze globali condivise (inizializzate in create_app)

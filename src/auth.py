@@ -125,7 +125,7 @@ def callback():
             if result:
                 classe = result["classe"]
 
-        if tipo == "docente" and (name not in admins and name not in centraline):
+        if tipo == "docente" and (users_email not in admins and users_email not in centraline):
             abilitato = True
             return "Non sei autorizzato", 401
 
@@ -143,9 +143,9 @@ def callback():
         elif session["tipo"] == "tutee":
             return redirect("/loginTutee")
         elif session["tipo"] == "docente":
-            if name in admins:
+            if users_email in admins:
                 return redirect("/loginDocenti")
-            elif name in centraline:
+            elif users_email in centraline:
                 session["tipo"] = "centralino"
                 return redirect("/loginCentraline")
             else:
