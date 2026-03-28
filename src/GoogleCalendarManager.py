@@ -55,7 +55,7 @@ class GoogleCalendarManager:
                 print(f"Time parsing error: {e}")
                 return False, "Invalid time format"
             
-            end_time = start_time + timedelta(minutes=50)
+            end_time = start_time + timedelta(minutes=60)
 
             # Create attendee list
             attendees = []
