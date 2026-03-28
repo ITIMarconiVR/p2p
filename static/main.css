@@ -298,3 +298,19 @@ button:focus {
 .fc-list-event-time{
     display: none;
 }
+
+/* Debug Version Display */
+.version-display {
+    /*display: none;*/
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+    z-index: 9999;
+    list-style: none;
+    text-decoration: none !important;
+    margin: 0 !important;
+}
