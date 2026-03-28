@@ -94,10 +94,10 @@ def get_tutors():
         db = get_db()
         cursor = db.cursor(dictionary=True)
         cursor.execute("""
-            SELECT P.matricolaP, S.nome, S.cognome, S.classe, COUNT(L.matricolaT) AS lezioni
+            SELECT P.matricolaP, P.descrizione, S.nome, S.cognome, S.classe, COUNT(L.matricolaT) AS lezioni
             FROM Peer AS P LEFT JOIN Lezioni AS L ON P.matricolaP = L.matricolaP
             JOIN Studenti AS S ON P.matricolaP = S.matricola
-            GROUP BY P.matricolaP, S.nome, S.cognome, S.classe
+            GROUP BY P.matricolaP, P.descrizione, S.nome, S.cognome, S.classe
             ORDER BY S.classe
         """)
         return jsonify(cursor.fetchall()), 200
@@ -132,6 +132,42 @@ def add_tutor():
             return jsonify({"message": "Tutor aggiunto con successo"}), 200
         else:
             return jsonify({"message": "Tutor già presente"}), 200
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@tutors_bp.route("/tutors/descrizione", methods=["GET", "POST"])
+@login_required
+def manage_tutor_description():
+    """Gestisce la descrizione del tutor."""
+    if session.get("tipo") != "tutor":
+        return jsonify({"error": "Non sei autorizzato"}), 401
+
+    matricola = session.get("mail")[:5]
+
+    try:
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+
+        if request.method == "GET":
+            cursor.execute("SELECT descrizione FROM Peer WHERE matricolaP = %s", (matricola,))
+            res = cursor.fetchone()
+            descrizione = res["descrizione"] if res and res["descrizione"] else ""
+            return jsonify({"descrizione": descrizione}), 200
+
+        elif request.method == "POST":
+            descrizione = request.json.get("descrizione")
+            if descrizione is None:
+                return jsonify({"error": "Descrizione mancante"}), 400
+            
+            if len(descrizione) > 500:
+                return jsonify({"error": "La descrizione non può superare i 500 caratteri"}), 400
+                
+            cursor.execute("UPDATE Peer SET descrizione = %s WHERE matricolaP = %s", (descrizione, matricola))
+            db.commit()
+            return jsonify({"message": "Descrizione aggiornata con successo"}), 200
 
     except Exception as e:
         print(f"An error occurred: {e}")

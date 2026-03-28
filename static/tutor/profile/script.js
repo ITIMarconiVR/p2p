@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Bentornato, ${newUserName}!`;
     }
 
+    loadDescription();
     loadMat();
     fetch(`/materie?matricola=${matricola}`)
         .then(response => response.json())
@@ -108,4 +109,35 @@ function handleAddSubject(event) {
         console.error('Errore durante l\'aggiunta della materia:', error);
         alert('Si è verificato un errore. Riprova.');
     });
+}
+
+async function loadDescription() {
+    try {
+        const res = await fetch('/tutors/descrizione');
+        if (res.ok) {
+            const data = await res.json();
+            document.getElementById('tutor-description').value = data.descrizione || '';
+        }
+    } catch (e) {
+        console.error('Errore get descrizione', e);
+    }
+}
+
+async function handleSaveDescription() {
+    const desc = document.getElementById('tutor-description').value;
+    try {
+        const res = await fetch('/tutors/descrizione', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ descrizione: desc })
+        });
+        const data = await res.json();
+        if (data.message) {
+            alert('Descrizione salvata con successo');
+        } else {
+            alert('Errore: ' + data.error);
+        }
+    } catch (e) {
+        alert('Errore durante il salvataggio');
+    }
 }

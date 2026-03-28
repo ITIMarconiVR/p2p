@@ -126,7 +126,8 @@ CREATE TABLE `MaterieInsegnate` (
 --
 
 CREATE TABLE `Peer` (
-  `matricolaP` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+  `matricolaP` varchar(5) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `descrizione` varchar(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------

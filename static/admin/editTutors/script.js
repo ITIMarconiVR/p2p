@@ -114,7 +114,7 @@ function handleAddTutor() {
 async function seeTutorInfo(tutor) {
     const modal = document.getElementById('modal-overlay');
     document.getElementById('modal-header').textContent = `Informazioni sul tutor ${tutor.nome} ${tutor.cognome}`;
-    document.getElementById('modal-text').innerHTML = `Matricola: ${tutor.matricolaP}<br>Nome: ${tutor.nome}<br>Cognome: ${tutor.cognome}<br>Classe: ${tutor.classe}`;
+    document.getElementById('modal-text').innerHTML = `Matricola: ${tutor.matricolaP}<br>Nome: ${tutor.nome}<br>Cognome: ${tutor.cognome}<br>Classe: ${tutor.classe}<br><br><b>Descrizione:</b><br>${tutor.descrizione || 'Nessuna descrizione impostata'}`;
 
 
     // lista materie insegnate dal tutor

@@ -20,7 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     createIndirizzoDropdown();
     createNomeTutorDropdown();
 
-    createCalendar(matricola, `/lezioniFilter?idMat=ALL&anno=ALL&indirizzo=ALL&matricolaP=ALL`);
+    const urlParams = new URLSearchParams(window.location.search);
+    const tutorParam = urlParams.get('tutor') || 'ALL';
+
+    createCalendar(matricola, `/lezioniFilter?idMat=ALL&anno=ALL&indirizzo=ALL&matricolaP=${tutorParam}`);
 });
 
 function createMaterieDropdown() {
@@ -107,6 +110,12 @@ function createNomeTutorDropdown() {
                 option.textContent = `${tutor.nome} ${tutor.cognome} ${tutor.classe}`;
                 nomiSelect.appendChild(option);
             });
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const tutorParam = urlParams.get('tutor');
+            if (tutorParam) {
+                nomiSelect.value = tutorParam;
+            }
         })
         .catch(error => console.error('Errore durante il recupero dei nomi', error));
 

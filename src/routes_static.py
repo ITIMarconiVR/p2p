@@ -99,6 +99,14 @@ def tutee_prenota():
                            user_id=session["mail"],
                            tipo=session["tipo"])
 
+@static_bp.route("/tutee/tutors")
+@login_required
+def tutee_tutors():
+    return render_template("tutee/tutors.html",
+                           username=session["name"],
+                           user_id=session["mail"],
+                           tipo=session["tipo"])
+
 @static_bp.route("/admin/editTutors")
 @login_required
 def admin_editTutors():

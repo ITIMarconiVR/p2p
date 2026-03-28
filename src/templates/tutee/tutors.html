@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUTEE - LISTA TUTOR</title>
+
+    <link rel="stylesheet" href="/html/tutee/tutors/style.css">
+    <script src="/html/tutee/tutors/script.js" defer></script>
+
+    <script>
+        const userName = "{{ username }}";
+        const mail = "{{ user_id }}";
+    </script> 
+</head>
+<body>
+    <header>
+        <h1 id="greeting">Benvenuto, Tutee!</h1>
+        <nav>
+            <ul>
+                <li><a href="/loginTutee">Dashboard</a></li>
+                <li><a href="/tutee/prenota">Prenota</a></li>
+                <li><a href="/logout">Logout</a></li>
+                <li class="version-display">v{{ config.VERSION }}</li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="filters">
+            <h3>FILTRI</h3>
+            <div>
+                <label for="materie">Filtra per materia:</label>
+                <div class="select-wrapper">
+                    <select id="materie"></select>
+                    <span class="icon arrow-drop-down"></span>
+                </div>
+            </div>
+            <div>
+                <label for="tutor_classes">Filtra per anno del tutor:</label>
+                <div class="select-wrapper">
+                    <select id="tutor_classes"></select>
+                    <span class="icon arrow-drop-down"></span>
+                </div>
+            </div>
+            <div>
+                <label for="tutor_indirizzo">Filtra per indirizzo del tutor:</label>
+                <div class="select-wrapper">
+                    <select id="tutor_indirizzo"></select>
+                    <span class="icon arrow-drop-down"></span>
+                </div>
+            </div>
+            <div>
+                <label for="tutor_nomi">Filtra per nome del tutor:</label>
+                <div class="select-wrapper">
+                    <select id="tutor_nomi"></select>
+                    <span class="icon arrow-drop-down"></span>
+                </div>
+            </div>
+        </section>
+        
+        <div style="margin: 20px 0;">
+            <h2>Tutor Disponibili</h2>
+            <p>Sfoglia la lista dei tutor e clicca Prenota per vedere le loro disponibilità sul calendario.</p>
+        </div>
+
+        <section id="tutor-cards-container" class="tutor-grid">
+            <!-- Tutor cards dynamically added here -->
+        </section>
+    </main>
+</body>
+</html>
