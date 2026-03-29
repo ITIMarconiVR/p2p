@@ -138,7 +138,8 @@ def reserve_event():
         message = (f"La lezione del giorno {data} alle ore {ora_str} "
                    f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
                    f"è stata prenotata dal tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}."
-                   f"\nMateria: {materiaL}\nArgomenti: {argomenti}")
+                   f"\nMateria: {materiaL}\nArgomenti: {argomenti}"
+                   f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
         send_email(dest, "Lezione prenotata", message)
 
         return jsonify({"message": "Event reserved successfully"}), 200
@@ -422,11 +423,13 @@ def delete_lezione():
             message = (f"La lezione del giorno {data} alle ore {ora_str} "
                        f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
                        f"e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} "
-                       f"è stata annullata da {deleter[0]} {deleter[1]}.")
+                       f"è stata annullata da {deleter[0]} {deleter[1]}."
+                       f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
         else:
             message = (f"La lezione del giorno {data} alle ore {ora_str} "
                        f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
-                       f"è stata annullata da {deleter[0]} {deleter[1]} {deleter[2]}.")
+                       f"è stata annullata da {deleter[0]} {deleter[1]} {deleter[2]}."
+                       f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})
@@ -508,11 +511,13 @@ def delete_lezione_tutor():
             message = (f"La lezione del giorno {data} alle ore {ora_str} "
                        f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
                        f"e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} "
-                       f"è stata annullata da {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]}.")
+                       f"è stata annullata da {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]}."
+                       f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
         else:
             message = (f"La lezione del giorno {data} alle ore {ora_str} "
                        f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
-                       f"è stata annullata da {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]}.")
+                       f"è stata annullata da {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]}."
+                       f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})
@@ -596,7 +601,8 @@ def delete_lezione_tutee():
         message = (f"La lezione del giorno {data} alle ore {ora_str} "
                    f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
                    f"e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} "
-                   f"è stata annullata da {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}.")
+                   f"è stata annullata da {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}."
+                   f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})

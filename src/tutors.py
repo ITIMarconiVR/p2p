@@ -32,7 +32,7 @@ def _notice_tutees(matricola):
         for tutee in tutees:
             destinatari = get_destinatari(tutee[0])
             send_email(destinatari, 'Lezione cancellata',
-                       f'Tutte le lezioni del tutor {nome_cogn[0]} {nome_cogn[1]} {nome_cogn[2]} sono state rimosse')
+                       f"Tutte le lezioni del tutor {nome_cogn[0]} {nome_cogn[1]} {nome_cogn[2]} sono state rimosse.\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
 
         # Copia in LezioniTutorRimossi
         cursor = db.cursor(dictionary=True)
