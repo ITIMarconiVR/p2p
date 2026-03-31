@@ -173,6 +173,10 @@ CREATE TABLE `ConfigurazioneServizio` (
 -- Dati per la tabella `ConfigurazioneServizio`
 --
 
+INSERT INTO `ConfigurazioneServizio` (`chiave`, `valore`) VALUES
+('versione', '1.0.0'),
+('servizio_attivo', '1');
+
 -- --------------------------------------------------------
 
 --

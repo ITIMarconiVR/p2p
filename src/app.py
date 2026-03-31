@@ -44,6 +44,23 @@ _ROUTE_ESCLUSE = {
 _PREFIX_ESCLUSI = ('/html/', '/css/', '/img/', '/lib/')
 
 
+@app.context_processor
+def inject_global_vars():
+    from db import get_db
+    vers = "1.0.0"
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT valore FROM ConfigurazioneServizio WHERE chiave = 'versione'")
+        row = cursor.fetchone()
+        cursor.close()
+        if row:
+            vers = row[0]
+    except Exception:
+        pass
+    return dict(versione_servizio=vers)
+
+
 @app.before_request
 def controlla_servizio():
     """
