@@ -161,6 +161,21 @@ CREATE TABLE `Tutorati` (
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `ConfigurazioneServizio`
+--
+
+CREATE TABLE `ConfigurazioneServizio` (
+  `chiave` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `valore` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
+
+--
+-- Dati per la tabella `ConfigurazioneServizio`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `utentiws`
 --
 
@@ -174,6 +189,12 @@ CREATE TABLE `utentiws` (
 --
 -- Indici per le tabelle scaricate
 --
+
+--
+-- Indici per le tabelle `ConfigurazioneServizio`
+--
+ALTER TABLE `ConfigurazioneServizio`
+  ADD PRIMARY KEY (`chiave`);
 
 --
 -- Indici per le tabelle `Admins`

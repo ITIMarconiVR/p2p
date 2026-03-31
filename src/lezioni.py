@@ -14,6 +14,56 @@ lezioni_bp = Blueprint('lezioni', __name__)
 
 
 # ------------------------------------------------------------------------------
+# Helper – stato del servizio
+
+def _is_servizio_attivo():
+    """Restituisce True se il servizio P2P è abilitato (valore DB = '1')."""
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT valore FROM ConfigurazioneServizio WHERE chiave = 'servizio_attivo'")
+        row = cursor.fetchone()
+        return row is not None and row[0] == '1'
+    except Exception:
+        # In caso di errore DB, considera il servizio attivo per non bloccare tutto
+        return True
+
+
+# ------------------------------------------------------------------------------
+# Stato e toggle del servizio (solo admin)
+
+@lezioni_bp.route("/servizio_stato", methods=["GET"])
+@login_required
+def servizio_stato():
+    """Restituisce lo stato attuale del servizio P2P."""
+    return jsonify({"attivo": _is_servizio_attivo()}), 200
+
+
+@lezioni_bp.route("/servizio_toggle", methods=["POST"])
+@login_required
+def servizio_toggle():
+    """Inverte lo stato del servizio P2P. Solo admin (tipo = 'docente')."""
+    from flask import session
+    if session.get("tipo") != "docente":
+        return jsonify({"error": "Non sei autorizzato"}), 401
+
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute(
+            "UPDATE ConfigurazioneServizio "
+            "SET valore = CASE WHEN valore = '1' THEN '0' ELSE '1' END "
+            "WHERE chiave = 'servizio_attivo'"
+        )
+        db.commit()
+        nuovo_stato = _is_servizio_attivo()
+        return jsonify({"attivo": nuovo_stato}), 200
+    except Exception as e:
+        print(f"Toggle servizio error: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+# ------------------------------------------------------------------------------
 # Disponibilità tutor
 
 @lezioni_bp.route("/add_event", methods=["POST"])
@@ -369,6 +419,7 @@ def delete_lezione():
     2> da tutor con tutee presente
     3> da tutor senza prenotazioni
     """
+
     matricolaT = request.json.get('matricolaT')
     matricolaP = request.json.get('matricolaP')
     data = request.json.get('data')

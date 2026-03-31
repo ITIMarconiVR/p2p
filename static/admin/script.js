@@ -10,6 +10,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('validate-all').addEventListener('click', () => valida_tutto());
 
+    // Inizializzazione Toggle Servizio
+    const toggleBtn = document.getElementById('servizio-toggle-btn');
+    const statusLabel = document.getElementById('servizio-status-label');
+
+    function updateToggleUI(attivo) {
+        statusLabel.style.display = 'inline';
+        toggleBtn.style.display = 'inline-block';
+        if (attivo) {
+            statusLabel.innerHTML = 'Servizio: <b style="color: green;">ATTIVO</b>';
+            toggleBtn.textContent = 'Disabilita Servizio';
+            toggleBtn.style.backgroundColor = ''; // Rimuove colore inline per usare il default css
+        } else {
+            statusLabel.innerHTML = 'Servizio: <b style="color: red;">DISABILITATO</b>';
+            toggleBtn.textContent = 'Abilita Servizio';
+            toggleBtn.style.backgroundColor = ''; // Rimuove colore inline per usare il default css
+        }
+    }
+
+    // Carica stato iniziale
+    fetch('/servizio_stato')
+        .then(res => res.json())
+        .then(data => updateToggleUI(data.attivo))
+        .catch(err => console.error("Errore fetch stato servizio:", err));
+
+    // Gestione click toggle
+    toggleBtn.addEventListener('click', () => {
+        if (confirm("Sei sicuro di voler cambiare lo stato del servizio globale?")) {
+            fetch('/servizio_toggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.error) {
+                    alert("Errore: " + data.error);
+                } else {
+                    updateToggleUI(data.attivo);
+                }
+            })
+            .catch(err => {
+                console.error("Errore toggle servizio:", err);
+                alert("Si è verificato un errore.");
+            });
+        }
+    });
+
     const calendarEl = document.getElementById('calendar');
     const unvalidatedEventsList = document.getElementById('unvalidated-events-list');
 

@@ -122,3 +122,12 @@ def admin_seeEvents():
                            username=session["name"],
                            user_id=session["mail"],
                            tipo=session["tipo"])
+
+
+# ------------------------------------------------------------------------------
+# Pagina avviso servizio disabilitato
+
+@static_bp.route("/servizio_disabilitato")
+def servizio_disabilitato():
+    return render_template("servizio_disabilitato.html"), 503
+
