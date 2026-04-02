@@ -180,6 +180,24 @@ INSERT INTO `ConfigurazioneServizio` (`chiave`, `valore`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `Notifiche`
+--
+
+CREATE TABLE `Notifiche` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `titolo` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `corpo` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `destinatario` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `data_ora` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `letta` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_destinatario` (`destinatario`),
+  KEY `idx_destinatario_letta` (`destinatario`, `letta`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `utentiws`
 --
 

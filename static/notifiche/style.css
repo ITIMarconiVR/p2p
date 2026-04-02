@@ -1,0 +1,102 @@
+@import '../main.css';
+
+/* Header – colore dinamico in base al ruolo */
+body.role-tutor header    { background-color: var(--primary-color_tutor); }
+body.role-tutee header    { background-color: var(--primary-color_tutee); }
+body.role-docente header  { background-color: var(--primary-color_docente); }
+body.role-centralino header { background-color: var(--primary-color_centralino); }
+
+/* Pulsanti – colore dinamico */
+body.role-tutor button    { background-color: var(--primary-color_tutor); }
+body.role-tutor button:hover { background-color: var(--primary-color-hover_tutor); }
+body.role-tutor button:active { background-color: var(--primary-color-active_tutor); }
+
+body.role-tutee button    { background-color: var(--primary-color_tutee); }
+body.role-tutee button:hover { background-color: var(--primary-color-hover_tutee); }
+body.role-tutee button:active { background-color: var(--primary-color-active_tutee); }
+
+body.role-docente button    { background-color: var(--primary-color_docente); }
+body.role-docente button:hover { background-color: var(--primary-color-hover_docente); }
+body.role-docente button:active { background-color: var(--primary-color-active_docente); }
+
+body.role-centralino button    { background-color: var(--primary-color_centralino); }
+body.role-centralino button:hover { background-color: var(--primary-color-hover_centralino); }
+body.role-centralino button:active { background-color: var(--primary-color-active_centralino); }
+
+/* Header notifiche */
+#notifiche-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5px 10px 5px;
+}
+
+/* Card notifica */
+.notifica-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 15px !important;
+    transition: background-color 0.3s ease, border-left 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+/* Notifica non letta – grassetto + bordo colorato */
+.notifica-card.non-letta {
+    font-weight: bold;
+    border-left: 4px solid #333;
+    background-color: #f0f4ff !important;
+}
+
+body.role-tutor .notifica-card.non-letta {
+    border-left-color: var(--primary-color_tutor);
+    background-color: #f3edff !important;
+}
+
+body.role-tutee .notifica-card.non-letta {
+    border-left-color: var(--primary-color_tutee);
+    background-color: #e6fff9 !important;
+}
+
+body.role-docente .notifica-card.non-letta {
+    border-left-color: var(--primary-color_docente);
+    background-color: #fff0f0 !important;
+}
+
+body.role-centralino .notifica-card.non-letta {
+    border-left-color: var(--primary-color_centralino);
+    background-color: #fff6ed !important;
+}
+
+/* Titolo notifica */
+.notifica-titolo {
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+/* Corpo notifica */
+.notifica-corpo {
+    font-size: 0.92rem;
+    color: #555;
+    white-space: pre-line;
+    font-weight: normal;
+}
+
+/* Data notifica */
+.notifica-data {
+    font-size: 0.8rem;
+    color: #999;
+    font-weight: normal;
+}
+
+/* Footer della card (data + pulsante) */
+.notifica-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notifica-footer button {
+    padding: 5px 12px;
+    font-size: 0.85rem;
+}

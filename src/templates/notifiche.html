@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifiche</title>
+
+    <link rel="stylesheet" href="/html/notifiche/style.css">
+    <script>
+        const userName = "{{ username }}";
+        const mail = "{{ user_id }}";
+        const tipo = "{{ tipo }}";
+    </script>
+    <script src="/html/notifiche/script.js" defer></script>
+</head>
+<body class="role-{{ tipo }}">
+    <header>
+        <h1 id="greeting">NOTIFICHE</h1>
+        <nav>
+            <ul>
+                <li><a href="javascript:history.back()">← Torna indietro</a></li>
+                <li><a href="/logout">Logout</a></li>
+                <li class="version-display">v{{ versione_servizio }}</li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <div id="notifiche-header">
+                <h3>LE TUE NOTIFICHE</h3>
+                <button id="segna-tutte-lette-btn">Segna tutte come lette</button>
+            </div>
+
+            <div id="notifiche-empty" style="display: none; padding: 20px; text-align: center; color: #999;">
+                Nessuna notifica.
+            </div>
+
+            <ul id="notifiche-list" class="cardList">
+                <!-- Le notifiche verranno inserite dinamicamente -->
+            </ul>
+        </section>
+    </main>
+</body>
+</html>

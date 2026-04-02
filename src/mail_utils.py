@@ -15,10 +15,46 @@ def send_email(recipients, subject, message):
     """
     Invia una email a tutti i destinatari indicati.
     Aggiunge sempre resp_mail in copia.
+    PRIMA dell'invio, crea notifiche interne per gli utenti del sistema.
+    In caso di errore nell'invio email, notifica gli admin.
     """
     if not all([recipients, message]):
         return jsonify({"error": "All fields are required"}), 400
 
+    # --- 1. Crea notifiche interne PRIMA dell'invio email ---
+    # Rimuovi la frase "no-reply" dal corpo della notifica
+    corpo_notifica = message.replace(
+        "\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.", ""
+    )
+
+    try:
+        from notifiche import crea_notifica
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+
+        for dest in recipients:
+            # Salta resp_mail: le notifiche normali non vanno al responsabile
+            if dest == resp_mail:
+                continue
+
+            # Verifica se il destinatario è un utente del sistema (studente)
+            cursor.execute(
+                "SELECT email FROM Studenti WHERE email = %s",
+                (dest,)
+            )
+            if cursor.fetchone():
+                crea_notifica(dest, subject, corpo_notifica)
+            else:
+                # Verifica se è un admin/centralino (docenti hanno email nel sistema)
+                from config import admins, centraline
+                if dest in admins or dest in centraline:
+                    crea_notifica(dest, subject, corpo_notifica)
+
+    except Exception as e:
+        print(f"Errore creazione notifiche interne: {e}")
+        # Non bloccare: le notifiche sono un bonus, l'email deve partire comunque
+
+    # --- 2. Invio email ---
     try:
         recipients.append(resp_mail)
         for des in recipients:
@@ -29,6 +65,22 @@ def send_email(recipients, subject, message):
         return jsonify({"message": "Email sent successfully"}), 200
     except Exception as e:
         print(f"An error occurred: {e}")
+
+        # --- 3. Notifica errore invio email a tutti gli admin ---
+        try:
+            from notifiche import crea_notifica
+            from config import admins
+            titolo_errore = "⚠️ Errore invio email"
+            corpo_errore = (
+                f"L'invio dell'email con oggetto \"{subject}\" "
+                f"ai destinatari {', '.join(recipients)} è fallito.\n\n"
+                f"Errore: {e}"
+            )
+            for admin_email in admins:
+                crea_notifica(admin_email, titolo_errore, corpo_errore)
+        except Exception as notify_err:
+            print(f"Errore anche nella notifica admin: {notify_err}")
+
         return jsonify({"error": "Internal server error"}), 500
 
 

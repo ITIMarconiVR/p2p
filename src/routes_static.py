@@ -125,6 +125,18 @@ def admin_seeEvents():
 
 
 # ------------------------------------------------------------------------------
+# Pagina notifiche (tutti i ruoli)
+
+@static_bp.route("/notifiche/pagina")
+@login_required
+def pagina_notifiche():
+    return render_template("notifiche.html",
+                           username=session["name"],
+                           user_id=session["mail"],
+                           tipo=session["tipo"])
+
+
+# ------------------------------------------------------------------------------
 # Pagina avviso servizio disabilitato
 
 @static_bp.route("/servizio_disabilitato")

@@ -14,6 +14,7 @@ from users import users_bp
 from tutors import tutors_bp
 from lezioni import lezioni_bp, _is_servizio_attivo
 from materie import materie_bp
+from notifiche import notifiche_bp
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Crea e configura l'app
@@ -28,6 +29,7 @@ app.register_blueprint(users_bp)
 app.register_blueprint(tutors_bp)
 app.register_blueprint(lezioni_bp)
 app.register_blueprint(materie_bp)
+app.register_blueprint(notifiche_bp)
 
 
 # ------------------------------------------------------------------------------
@@ -41,7 +43,7 @@ _ROUTE_ESCLUSE = {
     '/servizio_disabilitato',
     '/favicon.ico',
 }
-_PREFIX_ESCLUSI = ('/html/', '/css/', '/img/', '/lib/')
+_PREFIX_ESCLUSI = ('/html/', '/css/', '/img/', '/lib/', '/notifiche')
 
 
 @app.context_processor

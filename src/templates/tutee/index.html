@@ -23,11 +23,24 @@
                 <li><a href="/tutee/prenota">Prenota</a></li>
                 <li><a href="/tutee/tutors">Lista Tutor</a></li>
                 <li><a href="/logout">Logout</a></li>
+                <li><a href="/notifiche/pagina" class="notifiche-link">Notifiche <span id="notifiche-badge" class="notifiche-badge" style="display:none;">0</span></a></li>
                 <li class="version-display">v{{ versione_servizio }}</li>
             </ul>
         </nav>
     </header>
     <main>
+        <!-- Pop-up notifiche -->
+        <div id="notifiche-popup-overlay" class="notifiche-popup-overlay">
+            <div class="notifiche-popup">
+                <h3>Nuove notifiche</h3>
+                <p id="notifiche-popup-text">Hai nuove notifiche da leggere.</p>
+                <div class="notifiche-popup-actions">
+                    <button onclick="window.location.href='/notifiche/pagina'">Vai alle notifiche</button>
+                    <button class="btn-secondary" onclick="document.getElementById('notifiche-popup-overlay').classList.remove('visible')">Chiudi</button>
+                </div>
+            </div>
+        </div>
+
         <section>
             <h3>PROSSIME LEZIONI</h3>
             <ul id="upcoming-events-list" class="cardList">
@@ -36,5 +49,20 @@
         </section>
         <div id="calendar"></div>
     </main>
+    <script>
+        // Controllo notifiche al login
+        fetch('/notifiche/count')
+            .then(res => res.json())
+            .then(data => {
+                if (data.count > 0) {
+                    document.getElementById('notifiche-badge').textContent = data.count;
+                    document.getElementById('notifiche-badge').style.display = 'inline-flex';
+                    document.getElementById('notifiche-popup-text').textContent = 
+                        'Hai ' + data.count + ' nuov' + (data.count === 1 ? 'a' : 'e') + ' notific' + (data.count === 1 ? 'a' : 'he') + ' da leggere.';
+                    document.getElementById('notifiche-popup-overlay').classList.add('visible');
+                }
+            })
+            .catch(err => console.error('Errore check notifiche:', err));
+    </script>
 </body>
 </html>
