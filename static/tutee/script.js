@@ -10,32 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Bentornato, ${newUserName}!`;
     }
 
-    isTutor();
-
     createCalendar(matricola, '/lezioni2?matricolaT=');
     const upLessons = document.getElementById('upcoming-events-list');
     loadUpcomingLessons(upLessons);
 });
 
-function isTutor() {
-    fetch("/userInfo")
-        .then(response => response.json())
-        .then(data => {
-            if (data.tipo === "tutor") {
-                const ulNav = document.getElementById('listNav');
-                const liNav = document.createElement('li');
-                liNav.innerHTML = "Tutor";
-                liNav.style.cursor = "pointer";
-                liNav.addEventListener('click', () => {
-                    window.location.href = '/loginTutor';
-                });
-                ulNav.appendChild(liNav);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
 
 function redirectToLogin() {
     window.location.href = '../login/index.html';

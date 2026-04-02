@@ -11,14 +11,30 @@
         const userName = "{{ username }}";
         const mail = "{{ user_id }}";
     </script> 
+    <script src="/html/dropdown.js" defer></script>
 </head>
 <body>
     <header id="header">
-        <h1 id="greeting">ADMIN DASHBOARD</h1>
+        <h1 id="greeting">Admin Dashboard</h1>
         <nav>
             <ul>
                 <li><a href="/loginDocenti">Dashboard</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/admin/editTutors" class="nav-active">Modifica Tutor</a></li>
+                <li><a href="/admin/seeEvents">Vedi eventi</a></li>
+                <li>
+                    <a href="/notifiche/pagina" class="notifiche-link">
+                        <span class="icon notifiche-bell">notifications</span>
+                    </a>
+                </li>
+                <li class="profile-dropdown">
+                    <span class="icon profile-icon">account_circle</span>
+                    <div class="profile-menu">
+                        <div class="profile-menu-content">
+                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <a href="/logout"><span class="icon">logout</span> Logout</a>
+                        </div>
+                    </div>
+                </li>
                 <li class="version-display">v{{ versione_servizio }}</li>
             </ul>
         </nav>
@@ -26,13 +42,13 @@
     <main>
         <div id="add-tutor-modal" class="modal">
             <div class="modal-content">
-                <h3>AGGIUNGI TUTOR</h3>
+                <h3>Aggiungi tutor</h3>
                 <form id="add-tutor">
                     <div class="form-group">
                         <label for="tutor-matricola">Matricola:</label>
                         <input type="text" id="tutor-matricola" name="matricola" required>
                     </div>
-                    <button onclick="handleAddTutor();" type="submit">Aggiungi Tutor</button>
+                    <button onclick="handleAddTutor();" type="submit">Aggiungi tutor</button>
                 </form>
             </div>
         </div>

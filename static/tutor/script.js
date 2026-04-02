@@ -17,13 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         populateLessonLists(future, pastReserved);
     });
 
-    // mostro il menu Tutee solo se l'utente è abilitato
-    menuList = document.getElementById('menu');
-    if (abilitato) {
-        const liitem = document.createElement('li');
-        liitem.innerHTML = '<a href="/loginTutee">Tutee</a>';
-        menuList.appendChild(liitem);
-    }
 });
 
 function updateLessonCounts(future, pastReserved) {

@@ -15,15 +15,33 @@
         const mail = "{{ user_id }}";
         const abilitato = "{{ abilitato }}";
     </script> 
+    <script src="/html/dropdown.js" defer></script>
 </head>
 <body>
     <header>
-        <h1 id="greeting">BENTORNATO, TUTOR!</h1>
+        <h1 id="greeting">Bentornato!</h1>
         <nav>
             <ul id="menu">
-                <li><a href="/tutor/profile">Profilo</a></li>
-                <li><a href="/logout">Logout</a></li>
-                <li><a href="/notifiche/pagina" class="notifiche-link">Notifiche <span id="notifiche-badge" class="notifiche-badge" style="display:none;">0</span></a></li>
+                <li><a href="/loginTutor" class="nav-active">Dashboard</a></li>
+                <li>
+                    <a href="/notifiche/pagina" class="notifiche-link">
+                        <span class="icon notifiche-bell">notifications</span>
+                        <span id="notifiche-badge" class="notifiche-badge" style="display:none;">0</span>
+                    </a>
+                </li>
+                <li class="profile-dropdown">
+                    <span class="icon profile-icon">account_circle</span>
+                    <div class="profile-menu">
+                        <div class="profile-menu-content">
+                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            {% if tipo == 'tutor' %}
+                                <a href="/tutor/profile"><span class="icon">edit</span> Modifica</a>
+                                <a href="/loginTutee" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutee</a>
+                            {% endif %}
+                            <a href="/logout"><span class="icon">logout</span> Logout</a>
+                        </div>
+                    </div>
+                </li>
                 <li class="version-display">v{{ versione_servizio }}</li>
             </ul>
         </nav>
@@ -43,10 +61,10 @@
 
         <div id="add-tutor-modal" class="modal">
             <div class="modal-content">
-                <h3>Aggiungi Turno</h3>
+                <h3>Aggiungi turno</h3>
                 <p id="data-info">ore giorno data mese</p>
                 <div class="form-group">
-                    <label for="shift-time">Seleziona Turno:</label>
+                    <label for="shift-time">Seleziona turno:</label>
                     <div class="select-wrapper">
                         <select id="shift-time" name="shift-time" required>
                             <option value="1">13:40</option>
@@ -55,12 +73,12 @@
                         <span class="icon arrow-drop-down"></span>
                     </div>
                 </div>
-                <button id="addLessonButton" type="submit">Aggiungi Turno</button>
+                <button id="addLessonButton" type="submit">Aggiungi turno</button>
             </div>
         </div>
 
         <section>
-            <h3>LEZIONI IN PROGRAMMA</h3>
+            <h3>Lezioni in programma</h3>
             <ul id="scheduled-lessons-list" class="cardList">
                 <!-- Scheduled lessons will be dynamically inserted here -->
             </ul>
@@ -69,14 +87,14 @@
         <div id="calendar"></div>
 
         <section>
-            <h3>LEZIONI TENUTE</h3>
+            <h3>Lezioni tenute</h3>
             <ul id="held-lessons-list" class="cardList">
                 <!-- Held lessons will be dynamically inserted here -->
             </ul>
         </section>
 
         <section>
-            <h2>LEZIONI TOTALI</h2>
+            <h2>Lezioni totali</h2>
             <p id="lessons-count">Lezioni in programma: <span>0</span></p>
             <p id="lessons-count-PASTReserved">Lezioni tenute: <span>0</span></p>
             <p id="lessons-total">Totale lezioni: <span>0</span></p>

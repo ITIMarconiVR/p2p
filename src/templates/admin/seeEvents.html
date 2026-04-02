@@ -7,16 +7,30 @@
     <link rel="stylesheet" href="/html/admin/seeEvents/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="/html/dropdown.js" defer></script>
 </head>
 <body>
     <header>
-        <h1 id="titolo">Lezioni di oggi</h1>
-        
+        <h1 id="greeting">Admin Dashboard</h1>
         <nav>
             <ul>
-                <li><a href="/logout">Logout</a></li>
                 <li><a href="/loginDocenti">Dashboard</a></li>
                 <li><a href="/admin/editTutors">Modifica Tutor</a></li>
+                <li><a href="/admin/seeEvents" class="nav-active">Vedi eventi</a></li>
+                <li>
+                    <a href="/notifiche/pagina" class="notifiche-link">
+                        <span class="icon notifiche-bell">notifications</span>
+                    </a>
+                </li>
+                <li class="profile-dropdown">
+                    <span class="icon profile-icon">account_circle</span>
+                    <div class="profile-menu">
+                        <div class="profile-menu-content">
+                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <a href="/logout"><span class="icon">logout</span> Logout</a>
+                        </div>
+                    </div>
+                </li>
                 <li class="version-display">v{{ versione_servizio }}</li>
             </ul>
         </nav>

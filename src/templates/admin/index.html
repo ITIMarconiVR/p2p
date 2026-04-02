@@ -14,16 +14,31 @@
         const userName = "{{ username }}";
         const mail = "{{ user_id }}";
     </script> 
+    <script src="/html/dropdown.js" defer></script>
 </head>
 <body>
     <header>
-        <h1 id="greeting">ADMIN DASHBOARD</h1>
+        <h1 id="greeting">Admin Dashboard</h1>
         <nav>
             <ul>
+                <li><a href="/loginDocenti" class="nav-active">Dashboard</a></li>
                 <li><a href="/admin/editTutors">Modifica Tutor</a></li>
-                <li><a href="/logout">Logout</a></li>
                 <li><a href="/admin/seeEvents">Vedi eventi</a></li>
-                <li><a href="/notifiche/pagina" class="notifiche-link">Notifiche <span id="notifiche-badge" class="notifiche-badge" style="display:none;">0</span></a></li>
+                <li>
+                    <a href="/notifiche/pagina" class="notifiche-link">
+                        <span class="icon notifiche-bell">notifications</span>
+                        <span id="notifiche-badge" class="notifiche-badge" style="display:none;">0</span>
+                    </a>
+                </li>
+                <li class="profile-dropdown">
+                    <span class="icon profile-icon">account_circle</span>
+                    <div class="profile-menu">
+                        <div class="profile-menu-content">
+                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <a href="/logout"><span class="icon">logout</span> Logout</a>
+                        </div>
+                    </div>
+                </li>
                 <li class="version-display">v{{ versione_servizio }}</li>
             </ul>
         </nav>
@@ -50,7 +65,7 @@
         </div>
 
         <section>
-            <h3>IMPOSTAZIONI SERVIZIO</h3>
+            <h3>Impostazioni servizio</h3>
             <div style="margin-top: 10px;">
                 <span id="servizio-status-label" style="font-size: 1em; margin-right: 15px; display: none;"></span>
                 <button id="servizio-toggle-btn" style="display: none;">...</button>
@@ -59,8 +74,8 @@
 
         <section>
             <div id="unvalidated-events-header">
-                <h3>LEZIONI DA VALIDARE</h3>
-                <button id="validate-all">VALIDA TUTTO</button>
+                <h3>Lezioni da validare</h3>
+                <button id="validate-all">Valida tutto</button>
             </div>
             
             <ul id="unvalidated-events-list" class="cardList"></ul>

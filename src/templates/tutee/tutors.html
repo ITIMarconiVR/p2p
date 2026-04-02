@@ -12,22 +12,40 @@
         const userName = "{{ username }}";
         const mail = "{{ user_id }}";
     </script> 
+    <script src="/html/dropdown.js" defer></script>
 </head>
 <body>
     <header>
-        <h1 id="greeting">Benvenuto, Tutee!</h1>
+        <h1 id="greeting">Benvenuto!</h1>
         <nav>
             <ul>
                 <li><a href="/loginTutee">Dashboard</a></li>
                 <li><a href="/tutee/prenota">Prenota</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/tutee/tutors" class="nav-active">Lista Tutor</a></li>
+                <li>
+                    <a href="/notifiche/pagina" class="notifiche-link">
+                        <span class="icon notifiche-bell">notifications</span>
+                    </a>
+                </li>
+                <li class="profile-dropdown">
+                    <span class="icon profile-icon">account_circle</span>
+                    <div class="profile-menu">
+                        <div class="profile-menu-content">
+                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            {% if tipo == 'tutor' %}
+                                <a href="/loginTutor" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutor</a>
+                            {% endif %}
+                            <a href="/logout"><span class="icon">logout</span> Logout</a>
+                        </div>
+                    </div>
+                </li>
                 <li class="version-display">v{{ versione_servizio }}</li>
             </ul>
         </nav>
     </header>
     <main>
         <section class="filters">
-            <h3>FILTRI</h3>
+            <h3>Filtri</h3>
             <div>
                 <label for="materie">Filtra per materia:</label>
                 <div class="select-wrapper">

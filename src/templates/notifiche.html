@@ -12,14 +12,58 @@
         const tipo = "{{ tipo }}";
     </script>
     <script src="/html/notifiche/script.js" defer></script>
+    <script src="/html/dropdown.js" defer></script>
 </head>
 <body class="role-{{ tipo }}">
     <header>
-        <h1 id="greeting">NOTIFICHE</h1>
+        {% if tipo == 'docente' %}
+            <h1 id="greeting">Admin Dashboard</h1>
+        {% elif tipo == 'centralino' %}
+            <h1 id="greeting">Centralino Dashboard</h1>
+        {% elif tipo == 'tutor' %}
+            <h1 id="greeting">Bentornato!</h1>
+        {% else %}
+            <h1 id="greeting">Bentornato!</h1>
+        {% endif %}
+
         <nav>
             <ul>
-                <li><a href="javascript:history.back()">← Torna indietro</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <!-- Link specifici per ruolo -->
+                {% if tipo == 'tutee' %}
+                    <li><a href="/loginTutee">Dashboard</a></li>
+                    <li><a href="/tutee/prenota">Prenota</a></li>
+                    <li><a href="/tutee/tutors">Lista Tutor</a></li>
+                {% elif tipo == 'tutor' %}
+                    <li><a href="/loginTutor">Dashboard</a></li>
+                {% elif tipo == 'docente' %}
+                    <li><a href="/loginDocenti">Dashboard</a></li>
+                    <li><a href="/admin/editTutors">Modifica Tutor</a></li>
+                    <li><a href="/admin/seeEvents">Vedi eventi</a></li>
+                {% elif tipo == 'centralino' %}
+                    <li><a href="/loginCentraline">Dashboard</a></li>
+                {% endif %}
+
+                <!-- Icona Notifiche -->
+                <li>
+                    <a href="/notifiche/pagina" class="notifiche-link nav-active">
+                        <span class="icon notifiche-bell">notifications</span>
+                    </a>
+                </li>
+                
+                <!-- Dropdown Profilo comune a tutti -->
+                <li class="profile-dropdown">
+                    <span class="icon profile-icon">account_circle</span>
+                    <div class="profile-menu">
+                        <div class="profile-menu-content">
+                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            {% if tipo == 'tutor' %}
+                                <a href="/tutor/profile"><span class="icon">edit</span> Modifica</a>
+                                <a href="/loginTutee" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutee</a>
+                            {% endif %}
+                            <a href="/logout"><span class="icon">logout</span> Logout</a>
+                        </div>
+                    </div>
+                </li>
                 <li class="version-display">v{{ versione_servizio }}</li>
             </ul>
         </nav>
@@ -27,7 +71,7 @@
     <main>
         <section>
             <div id="notifiche-header">
-                <h3>LE TUE NOTIFICHE</h3>
+                <h3>Le tue notifiche</h3>
                 <button id="segna-tutte-lette-btn">Segna tutte come lette</button>
             </div>
 

@@ -50,10 +50,6 @@
     box-shadow: var(--box-shadow);
 }
 
-.fc-toolbar-title {
-    text-transform: capitalize;
-}
-
 @media (max-width: 768px) {
     .fc-toolbar-title {
         font-size: 1.2rem !important;
@@ -63,6 +59,7 @@
 /* Header */
 header {
     height: 8vh;
+    min-height: 60px;
     position: sticky;
     top: 0;
     width: 100%;
@@ -70,14 +67,15 @@ header {
     padding: 15px 20px;
     border-radius: 15px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+    z-index: 50; /* Higher z-index for dropdowns */
 }
 
 header h1 {
     font-size: 1.5rem;
+    margin: 0;
 }
 
 @media (max-width: 768px) {
@@ -90,11 +88,14 @@ header h1 {
 nav ul {
     list-style: none;
     display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
 }
 
 nav li {
-    margin-left: 20px;
-    text-decoration: underline;
+    margin: 0;
 }
 
 nav a {
@@ -102,10 +103,89 @@ nav a {
     color: #fff;
     font-size: 1rem;
     transition: opacity var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 nav a:hover {
-    opacity: 0.8;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    opacity: 1;
+}
+
+.nav-active {
+    font-weight: bold;
+    opacity: 1;
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 0;
+}
+
+.profile-icon {
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+.profile-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
+    background-color: #fff;
+    color: var(--text-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    display: none;
+    flex-direction: column;
+    min-width: 200px;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.profile-dropdown.active .profile-menu {
+    display: flex;
+}
+
+.profile-menu p {
+    padding: 15px;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.profile-menu-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-menu a {
+    padding: 12px 15px;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    transition: background-color var(--transition);
+}
+
+.profile-menu a:hover {
+    background-color: #f5f5f5;
+    font-weight: normal; /* Override nav a hover */
+    text-decoration: none; /* Override nav underline on hover */
+}
+
+
+
+.notifiche-bell {
+    font-size: 1.6rem;
+    color: #fff;
 }
 
 /* Body */
@@ -320,23 +400,32 @@ button:focus {
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.notifiche-link .icon {
+    color: #fff;
 }
 
 .notifiche-badge {
+    position: absolute;
+    top: -5px;
+    right: -10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-width: 18px;
     height: 18px;
-    padding: 0 5px;
+    padding: 0 4px;
     border-radius: 9px;
     background-color: #ff4444;
     color: #fff;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: bold;
     line-height: 1;
     text-decoration: none;
+    z-index: 10;
 }
 
 /* Notification Pop-up */
