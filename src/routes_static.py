@@ -47,6 +47,7 @@ def index():
 @static_bp.route("/loginTutor")
 @login_required
 def loginTutor():
+    session["view_mode"] = "tutor"
     return render_template("tutor/index.html",
                            username=session["name"],
                            user_id=session["mail"],
@@ -58,6 +59,7 @@ def loginTutor():
 def loginTutee():
     if session["tipo"] == "tutor" and session["abilitato"] == 0:
         return "Non sei autorizzato causa mancato pagamento del contributo volontario", 401
+    session["view_mode"] = "tutee"
     return render_template("tutee/index.html",
                            username=session["name"],
                            user_id=session["mail"],
@@ -66,6 +68,7 @@ def loginTutee():
 @static_bp.route("/loginDocenti")
 @login_required
 def loginDocenti():
+    session["view_mode"] = "docente"
     return render_template("admin/index.html",
                            username=session["name"],
                            user_id=session["mail"],
@@ -74,6 +77,7 @@ def loginDocenti():
 @static_bp.route("/loginCentraline")
 @login_required
 def loginCentraline():
+    session["view_mode"] = "centralino"
     return render_template("centralino/index.html",
                            username=session["name"],
                            user_id=session["mail"],
@@ -130,10 +134,12 @@ def admin_seeEvents():
 @static_bp.route("/notifiche/pagina")
 @login_required
 def pagina_notifiche():
+    view_mode = session.get("view_mode", session["tipo"])
     return render_template("notifiche.html",
                            username=session["name"],
                            user_id=session["mail"],
-                           tipo=session["tipo"])
+                           tipo=session["tipo"],
+                           view_mode=view_mode)
 
 
 # ------------------------------------------------------------------------------

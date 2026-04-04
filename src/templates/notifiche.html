@@ -14,13 +14,13 @@
     <script src="/html/notifiche/script.js" defer></script>
     <script src="/html/dropdown.js?v=2" defer></script>
 </head>
-<body class="role-{{ tipo }}">
+<body class="role-{{ view_mode }}">
     <header>
-        {% if tipo == 'docente' %}
+        {% if view_mode == 'docente' %}
             <h1 id="greeting">Admin Dashboard</h1>
-        {% elif tipo == 'centralino' %}
+        {% elif view_mode == 'centralino' %}
             <h1 id="greeting">Centralino Dashboard</h1>
-        {% elif tipo == 'tutor' %}
+        {% elif view_mode == 'tutor' %}
             <h1 id="greeting">Bentornato!</h1>
         {% else %}
             <h1 id="greeting">Bentornato!</h1>
@@ -29,17 +29,17 @@
         <nav>
             <ul>
                 <!-- Link specifici per ruolo -->
-                {% if tipo == 'tutee' %}
+                {% if view_mode == 'tutee' %}
                     <li><a href="/loginTutee">Dashboard</a></li>
                     <li><a href="/tutee/prenota">Prenota</a></li>
                     <li><a href="/tutee/tutors">Lista Tutor</a></li>
-                {% elif tipo == 'tutor' %}
+                {% elif view_mode == 'tutor' %}
                     <li><a href="/loginTutor">Dashboard</a></li>
-                {% elif tipo == 'docente' %}
+                {% elif view_mode == 'docente' %}
                     <li><a href="/loginDocenti">Dashboard</a></li>
                     <li><a href="/admin/editTutors">Modifica Tutor</a></li>
                     <li><a href="/admin/seeEvents">Vedi eventi</a></li>
-                {% elif tipo == 'centralino' %}
+                {% elif view_mode == 'centralino' %}
                     <li><a href="/loginCentraline">Dashboard</a></li>
                 {% endif %}
 
@@ -57,8 +57,12 @@
                         <div class="profile-menu-content">
                             <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
                             {% if tipo == 'tutor' %}
-                                <a href="/tutor/profile"><span class="icon">edit</span> Modifica</a>
-                                <a href="/loginTutee" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutee</a>
+                                {% if view_mode == 'tutor' %}
+                                    <a href="/tutor/profile"><span class="icon">edit</span> Modifica</a>
+                                    <a href="/loginTutee" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutee</a>
+                                {% else %}
+                                    <a href="/loginTutor" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutor</a>
+                                {% endif %}
                             {% endif %}
                             <a href="/logout"><span class="icon">logout</span> Logout</a>
                         </div>
