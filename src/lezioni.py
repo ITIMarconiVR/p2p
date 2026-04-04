@@ -131,6 +131,9 @@ def reserve_event():
 
     if matricolaT != session["mail"][:5]:
         return jsonify({"error": "not allowed"})
+        
+    if matricolaP == matricolaT:
+        return jsonify({"error": "Non puoi prenotare una tua stessa lezione"}), 400
 
     try:
         db = get_db()
@@ -340,12 +343,13 @@ def get_lezioni_per_materia():
             WHERE MI.matricola = L.matricolaP
               AND S1.matricola = L.matricolaP
               AND L.matricolaP LIKE %s
+              AND L.matricolaP != %s
               AND L.matricolaT IS NULL
               AND L.validata = 1
               AND MI.idMat LIKE %s
               AND S1.classe LIKE %s
               AND S1.classe LIKE %s
-        """, ('%' + matricolaP + '%', idMat, '%' + anno + '%', '%' + indirizzo + '%'))
+        """, ('%' + matricolaP + '%', session["mail"][:5], idMat, '%' + anno + '%', '%' + indirizzo + '%'))
         return jsonify(cursor.fetchall()), 200
 
     except Exception as e:
