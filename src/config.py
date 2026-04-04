@@ -21,7 +21,7 @@ GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configura
 # Utenti speciali 
 admins = ['lorenzo.decarli@marconiverona.edu.it', 'claudia.carletti@marconiverona.edu.it', 'p2p@marconiverona.edu.it']
 #admins = ['LORENZO DE CARLI', 'CLAUDIA CARLETTI', 'peerTopeer Marconi']
-resp_mail = 'claudia.carletti@marconiverona.edu.it'
+resp_mail = '21048@studenti.marconiverona.edu.it' # 'claudia.carletti@marconiverona.edu.it'
 centraline = ['paola.lavagnoli@marconiverona.edu.it', 'luisella.carli@marconiverona.edu.it', 'palmina.giannetto@marconiverona.edu.it']
 #centraline = ['PAOLA LAVAGNOLI', 'LUISELLA CARLI', 'PALMINA GIANNETTO']
 

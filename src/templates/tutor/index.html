@@ -47,17 +47,6 @@
         </nav>
     </header>
     <main>
-        <!-- Pop-up notifiche -->
-        <div id="notifiche-popup-overlay" class="notifiche-popup-overlay">
-            <div class="notifiche-popup">
-                <h3>Nuove notifiche</h3>
-                <p id="notifiche-popup-text">Hai nuove notifiche da leggere.</p>
-                <div class="notifiche-popup-actions">
-                    <button onclick="window.location.href='/notifiche/pagina'">Vai alle notifiche</button>
-                    <button class="btn-secondary" onclick="document.getElementById('notifiche-popup-overlay').classList.remove('visible')">Chiudi</button>
-                </div>
-            </div>
-        </div>
 
         <div id="add-tutor-modal" class="modal">
             <div class="modal-content">
@@ -101,20 +90,6 @@
             <p style="color: red;">Riceverai un compenso per al massimo 40 lezioni SE è stato pagato il contributo volontario.</p>
         </section>
     </main>
-    <script>
-        // Controllo notifiche al login
-        fetch('/notifiche/count')
-            .then(res => res.json())
-            .then(data => {
-                if (data.count > 0) {
-                    document.getElementById('notifiche-badge').textContent = data.count;
-                    document.getElementById('notifiche-badge').style.display = 'inline-flex';
-                    document.getElementById('notifiche-popup-text').textContent = 
-                        'Hai ' + data.count + ' nuov' + (data.count === 1 ? 'a' : 'e') + ' notific' + (data.count === 1 ? 'a' : 'he') + ' da leggere.';
-                    document.getElementById('notifiche-popup-overlay').classList.add('visible');
-                }
-            })
-            .catch(err => console.error('Errore check notifiche:', err));
-    </script>
+
 </body>
 </html>

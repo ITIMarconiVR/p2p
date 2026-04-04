@@ -70,7 +70,7 @@ def send_email(recipients, subject, message):
         try:
             from notifiche import crea_notifica
             from config import admins
-            titolo_errore = "⚠️ Errore invio email"
+            titolo_errore = "Errore invio email"
             corpo_errore = (
                 f"L'invio dell'email con oggetto \"{subject}\" "
                 f"ai destinatari {', '.join(recipients)} è fallito.\n\n"
