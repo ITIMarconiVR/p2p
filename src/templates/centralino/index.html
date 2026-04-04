@@ -25,7 +25,7 @@
                     <span class="icon profile-icon">account_circle</span>
                     <div class="profile-menu">
                         <div class="profile-menu-content">
-                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
                             <a href="/logout"><span class="icon">logout</span> Logout</a>
                         </div>
                     </div>

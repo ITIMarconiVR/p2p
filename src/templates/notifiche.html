@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="/html/notifiche/style.css">
     <script>
-        const userName = "{{ username }}";
+        const userName = "{{ username | title }}";
         const mail = "{{ user_id }}";
         const tipo = "{{ tipo }}";
     </script>
@@ -55,7 +55,7 @@
                     <span class="icon profile-icon">account_circle</span>
                     <div class="profile-menu">
                         <div class="profile-menu-content">
-                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
                             {% if tipo == 'tutor' %}
                                 <a href="/tutor/profile"><span class="icon">edit</span> Modifica</a>
                                 <a href="/loginTutee" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutee</a>

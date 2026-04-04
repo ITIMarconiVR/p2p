@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/html/admin/editTutors/style.css">
     <script src="/html/admin/editTutors/script.js" defer></script>
     <script>
-        const userName = "{{ username }}";
+        const userName = "{{ username | title }}";
         const mail = "{{ user_id }}";
     </script> 
     <script src="/html/dropdown.js" defer></script>
@@ -30,7 +30,7 @@
                     <span class="icon profile-icon">account_circle</span>
                     <div class="profile-menu">
                         <div class="profile-menu-content">
-                            <p>{{ username }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
                             <a href="/logout"><span class="icon">logout</span> Logout</a>
                         </div>
                     </div>
