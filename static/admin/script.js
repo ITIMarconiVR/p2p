@@ -96,7 +96,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             const listItem = document.createElement('li');
                             const add = document.createElement('button');
                             add.textContent = 'Valida';
-                            listItem.innerHTML = `<span><b>${event.title}</b> da parte di <b>${event.matricolaP}</b> il giorno <b>${event.start.split('T')[0]}</b></span>`;
+                            
+                            const [year, month, day] = event.start.split('T')[0].split('-');
+                            const eventDateObj = new Date(year, month - 1, day);
+                            const formattedDate = eventDateObj.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                            const oraStr = event.ora === 1 ? '13.40' : '14.30';
+                            
+                            listItem.innerHTML = `<span>Richiesta da parte di <b>${event.nomeP}</b> per il giorno <b>${formattedDate}</b> dalle ${oraStr} (turno ${event.ora})</span>`;
                             listItem.dataset.eventId = event.id;
                             
                             add.addEventListener('click', () => {

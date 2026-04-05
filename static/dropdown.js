@@ -42,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <h3>Nuove notifiche</h3>
                             <p id="notifiche-popup-text"></p>
                             <div class="notifiche-popup-actions">
-                                <button onclick="window.location.href='/notifiche/pagina'">Vai alle notifiche</button>
                                 <button class="btn-secondary" id="chiudi-notifiche-btn">Chiudi</button>
+                                <button onclick="window.location.href='/notifiche/pagina'">Vai alle notifiche</button>
                             </div>
                         </div>
                     `;
