@@ -61,12 +61,17 @@ def login():
 
 @auth_bp.route("/login/callback")
 def callback():
+    if request.args.get("error"):
+        error_reason = request.args.get("error")
+        return f"Accesso negato o annullato ({error_reason}). I permessi richiesti sono obbligatori per l'utilizzo del servizio. <br><br> <a href='/login'>Riprova a fare il login</a>", 400
+
     code = request.args.get("code")
+    if not code:
+        return "Codice di autorizzazione mancante. <br><br> <a href='/login'>Riprova a fare il login</a>", 400
+
     state = request.args.get("state", default=None, type=None)
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
-
-
 
     oauth_session = OAuth2Session(GOOGLE_CLIENT_ID, state=state, redirect_uri=request.base_url)
     oauth_session.fetch_token(token_endpoint, client_secret=GOOGLE_CLIENT_SECRET,
