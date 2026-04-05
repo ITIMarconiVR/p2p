@@ -86,7 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         unvalidatedEventsList.innerHTML = '';
 
-                        events.filter(event => event.validata === 0).forEach(event => {
+                        const now = new Date();
+                        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+                        events.filter(event => {
+                            const eventDateStr = event.start.split('T')[0];
+                            return event.validata === 0 && eventDateStr >= todayStr;
+                        }).forEach(event => {
                             const listItem = document.createElement('li');
                             const add = document.createElement('button');
                             add.textContent = 'Valida';
