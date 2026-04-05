@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,9 +15,10 @@
         const userName = "{{ username | title }}";
         const mail = "{{ user_id }}";
         const abilitato = "{{ abilitato }}";
-    </script> 
+    </script>
     <script src="/html/dropdown.js" defer></script>
 </head>
+
 <body>
     <header>
         <h1 id="greeting">Bentornato!</h1>
@@ -33,10 +35,13 @@
                     <span class="icon profile-icon">account_circle</span>
                     <div class="profile-menu">
                         <div class="profile-menu-content">
-                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo ==
+                                    'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee'
+                                    %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
                             {% if tipo == 'tutor' %}
-                                <a href="/tutor/profile"><span class="icon">edit</span> Modifica</a>
-                                <a href="/loginTutee" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutee</a>
+                            <a href="/tutor/profile"><span class="icon">edit</span> Modifica</a>
+                            <a href="/loginTutee" class="switch-account"><span class="icon">swap_horiz</span> Passa a
+                                Tutee</a>
                             {% endif %}
                             <a href="/logout"><span class="icon">logout</span> Logout</a>
                         </div>
@@ -87,9 +92,11 @@
             <p id="lessons-count">Lezioni in programma: <span>0</span></p>
             <p id="lessons-count-PASTReserved">Lezioni tenute: <span>0</span></p>
             <p id="lessons-total">Totale lezioni: <span>0</span></p>
-            <p style="color: red;">Riceverai un compenso per al massimo 40 lezioni SE è stato pagato il contributo volontario.</p>
+            <p style="color: red;">Riceverai un compenso per al massimo 40 lezioni SE è stato pagato il contributo
+                volontario.</p>
         </section>
     </main>
 
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +11,10 @@
     <script>
         const userName = "{{ username | title }}";
         const mail = "{{ user_id }}";
-    </script> 
+    </script>
     <script src="/html/dropdown.js" defer></script>
 </head>
+
 <body>
     <header id="header">
         <h1 id="greeting">Admin Dashboard</h1>
@@ -30,7 +32,9 @@
                     <span class="icon profile-icon">account_circle</span>
                     <div class="profile-menu">
                         <div class="profile-menu-content">
-                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo ==
+                                    'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee'
+                                    %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
                             <a href="/logout"><span class="icon">logout</span> Logout</a>
                         </div>
                     </div>
@@ -68,22 +72,23 @@
                 <!-- Tutor rows will be dynamically added here -->
             </tbody>
         </table>
-        
-        <div id="modal-overlay" class="modal"> 
-            <div id="event-modal" class="modal-content"> 
-                <h3 id="modal-header"></h3> 
+
+        <div id="modal-overlay" class="modal">
+            <div id="event-modal" class="modal-content">
+                <h3 id="modal-header"></h3>
                 <p id="modal-text"></p>
-                <ul id="materie-list"></ul> 
+                <ul id="materie-list"></ul>
 
                 <h3>Lezioni cancellate dal Tutor</h3>
                 <p id="meno2g_prenotate"></p>
                 <p id="prenotate"></p>
                 <p id="totali"></p>
-                <button id="close-modal">Chiudi</button> 
-            </div> 
+                <button id="close-modal">Chiudi</button>
+            </div>
         </div>
 
         <button id="open-add-tutor-modal" class="circular-button">+</button>
     </main>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +14,10 @@
     <script>
         const userName = "{{ username | title }}";
         const mail = "{{ user_id }}";
-    </script> 
+    </script>
     <script src="/html/dropdown.js" defer></script>
 </head>
+
 <body>
     <header>
         <h1 id="greeting">Benvenuto!</h1>
@@ -33,9 +35,12 @@
                     <span class="icon profile-icon">account_circle</span>
                     <div class="profile-menu">
                         <div class="profile-menu-content">
-                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo ==
+                                    'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee'
+                                    %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
                             {% if tipo == 'tutor' %}
-                                <a href="/loginTutor" class="switch-account"><span class="icon">swap_horiz</span> Passa a Tutor</a>
+                            <a href="/loginTutor" class="switch-account"><span class="icon">swap_horiz</span> Passa a
+                                Tutor</a>
                             {% endif %}
                             <a href="/logout"><span class="icon">logout</span> Logout</a>
                         </div>
@@ -93,7 +98,7 @@
                 </div>
             </div>
         </section>
-        
+
         <div>
             <h2>Lezioni</h2>
             <p>Per prenotare una lezione è sufficiente cliccare su di essa nel calendario qui sotto</p>
@@ -102,4 +107,5 @@
         <div id="calendar"></div>
     </main>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +14,10 @@
     <script>
         const userName = "{{ username | title }}";
         const mail = "{{ user_id }}";
-    </script> 
+    </script>
     <script src="/html/dropdown.js" defer></script>
 </head>
+
 <body>
     <header>
         <h1 id="greeting">Admin Dashboard</h1>
@@ -34,7 +36,9 @@
                     <span class="icon profile-icon">account_circle</span>
                     <div class="profile-menu">
                         <div class="profile-menu-content">
-                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo == 'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee' %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
+                            <p>{{ username | title }}<br><small>({% if tipo == 'docente' %}Amministratore{% elif tipo ==
+                                    'centralino' %}Centralino{% elif tipo == 'tutor' %}Tutor{% elif tipo == 'tutee'
+                                    %}Tutee{% else %}{{ tipo|capitalize }}{% endif %})</small></p>
                             <a href="/logout"><span class="icon">logout</span> Logout</a>
                         </div>
                     </div>
@@ -45,12 +49,12 @@
     </header>
     <main>
 
-        <div id="modal-overlay" class="modal"> 
-            <div id="event-modal" class="modal-content"> 
-                <h3 id="modal-header"></h3> 
-                <ul id="event-list"></ul> 
-                <button id="close-modal">Chiudi</button> 
-            </div> 
+        <div id="modal-overlay" class="modal">
+            <div id="event-modal" class="modal-content">
+                <h3 id="modal-header"></h3>
+                <ul id="event-list"></ul>
+                <button id="close-modal">Chiudi</button>
+            </div>
         </div>
 
         <section>
@@ -66,7 +70,7 @@
                 <h3>Lezioni da validare</h3>
                 <button id="validate-all">Valida tutto</button>
             </div>
-            
+
             <ul id="unvalidated-events-list" class="cardList"></ul>
         </section>
 
@@ -74,4 +78,5 @@
     </main>
 
 </body>
+
 </html>
