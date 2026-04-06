@@ -1,11 +1,11 @@
 @import '../../main.css';
 
-/* Header */
+/* ── Header ── */
 header {
     background-color: var(--primary-color_tutor);
 }
 
-/* Button */
+/* ── Buttons ── */
 button {
     background-color: var(--primary-color_tutor);
 }
@@ -27,18 +27,42 @@ select:focus {
     box-shadow: 0 0 5px rgba(92, 0, 221, 0.3);
 }
 
-/* Description textarea */
+/* ── Two-column grid ── */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 2vh;
+    align-items: start;
+}
+
+/* ── Left card: Description ── */
+#description-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: 100%;
+}
+
+#description-section h3 {
+    margin: 0 0 4px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+    font-size: 1.1rem;
+}
+
 #tutor-description {
     width: 100%;
+    flex: 1;
+    min-height: 180px;
     padding: 12px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     font-family: var(--font-family);
     font-size: 0.95rem;
     resize: vertical;
-    transition: border-color var(--transition), box-shadow var(--transition);
-    min-height: 100px;
     line-height: 1.5;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    color: var(--text-color);
 }
 
 #tutor-description:focus {
@@ -48,64 +72,97 @@ select:focus {
 }
 
 #description-section button {
-    margin-top: 4px;
-}
-
-/* Add subject form */
-#add-subject {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-#add-subject .form-group {
-    display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 6px;
+    width: 100%;
 }
 
-#add-subject .form-group p {
+/* ── Right card: Subjects ── */
+#subjects-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#subjects-section h3 {
+    margin: 0 0 4px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+    font-size: 1.1rem;
+}
+
+/* Add subject row */
+#add-subject-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.add-subject-hint {
     margin: 0;
     font-size: 0.85rem;
-    color: #757575;
+    color: #888;
 }
 
-/* Table – styled via shared class */
+.add-subject-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.add-subject-row .select-wrapper {
+    flex: 1;
+}
+
+.add-subject-row button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* ── Table ── */
 .subjects-table th {
     background-color: var(--primary-color_tutor) !important;
     color: #fff !important;
 }
 
-.subjects-table .remove-btn {
-    background: none;
-    border: none;
-    color: #dc3545;
-    cursor: pointer;
-    padding: 4px 8px;
-    font-size: 0.9rem;
-    box-shadow: none;
+.subjects-table td:last-child {
+    width: 1%;
+    white-space: nowrap;
 }
 
-.subjects-table .remove-btn:hover {
-    color: #a71d2a;
-    background: rgba(220, 53, 69, 0.08);
-    border-radius: 6px;
-    transform: none;
-    box-shadow: none;
+/* Delete button inside table */
+.subjects-table button {
+    background-color: #dc3545;
+    padding: 5px 12px;
+    font-size: 0.85rem;
 }
 
-/* Capitalize FullCalendar Month Title */
-.fc-toolbar-title {
-    text-transform: capitalize !important;
+.subjects-table button:hover {
+    background-color: #b02a37;
 }
 
-/* ── Mobile ── */
+/* ── Mobile: stack cards vertically ── */
 @media (max-width: 768px) {
-    #description-section button {
-        width: 100%;
+    .profile-grid {
+        grid-template-columns: 1fr;
     }
 
-    #add-subject button {
+    .add-subject-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .add-subject-row button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    #description-section button {
         width: 100%;
     }
 }

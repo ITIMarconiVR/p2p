@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TUTOR - MATERIE</title>
+    <title>TUTOR - PROFILO</title>
 
     <link rel="stylesheet" href="/html/tutor/profile/style.css">
     <script src="/html/tutor/profile/script.js" defer></script>
@@ -50,46 +50,57 @@
             </ul>
         </nav>
     </header>
-    <main>
-        <section id="description-section">
-            <h3>Descrizione personale</h3>
-            <textarea id="tutor-description"
-                placeholder="Scrivi una breve descrizione personale da mostrare ai tutee..."></textarea>
-            <button type="button" onclick="handleSaveDescription()">Salva descrizione</button>
-        </section>
 
-        <section id="add-subject-form">
-            <h3>Aggiungi materia</h3>
-            <form id="add-subject">
-                <div class="form-group">
-                    <p>Nome della materia come indicato sull'orario</p>
-                    <div class="select-wrapper">
-                        <select id="subject-name">
-                            <option value="-1">Materia</option>
-                        </select>
-                        <span class="icon arrow-drop-down"></span>
+    <main>
+        <div class="profile-grid">
+
+            <!-- Card sinistra: Descrizione -->
+            <section id="description-section">
+                <h3>Descrizione personale</h3>
+                <textarea id="tutor-description"
+                    placeholder="Scrivi una breve descrizione personale da mostrare ai tutee..."></textarea>
+                <button type="button" onclick="handleSaveDescription()">
+                    <span class="icon">save</span> Salva descrizione
+                </button>
+            </section>
+
+            <!-- Card destra: Materie -->
+            <section id="subjects-section">
+                <h3>Le tue materie</h3>
+
+                <!-- Aggiungi materia -->
+                <div id="add-subject-form">
+                    <p class="add-subject-hint">Seleziona la materia dall'elenco e premi "Aggiungi"</p>
+                    <div class="add-subject-row">
+                        <div class="select-wrapper">
+                            <select id="subject-name">
+                                <option value="-1">Seleziona materia…</option>
+                            </select>
+                            <span class="icon arrow-drop-down"></span>
+                        </div>
+                        <button type="button" onclick="handleAddSubject()">
+                            <span class="icon">add</span> Aggiungi
+                        </button>
                     </div>
                 </div>
-                <button type="button" onclick="handleAddSubject()">Aggiungi materia</button>
-            </form>
-        </section>
 
-        <section>
-            <h3>Le tue materie</h3>
-            <div class="table-responsive">
-            <table class="subjects-table styled-table">
-                <thead>
-                    <tr>
-                        <th>Materia</th>
-                        <th>Azioni</th>
-                    </tr>
-                </thead>
-                <tbody id="subjects-table-content">
-                    <!-- Subjects will be dynamically added here -->
-                </tbody>
-            </table>
-            </div>
-        </section>
+                <!-- Tabella materie -->
+                <div class="table-responsive">
+                    <table class="subjects-table styled-table">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subjects-table-content">
+                            <!-- Materie caricate dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
     </main>
 </body>
 

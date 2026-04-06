@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => console.error('Errore durante il recupero delle materie:', error));
 
-    document.getElementById('add-subject').addEventListener('submit', handleAddSubject);
 });
 
 async function loadMat() {
@@ -75,7 +74,7 @@ function addSubject(subjectID) {
     const deleteButton = document.createElement('button');
 
     subjectName.textContent = subjectID;
-    deleteButton.textContent = 'Remove';
+    deleteButton.textContent = 'Rimuovi';
 
     deleteButton.addEventListener('click', () => handleRemoveSubject(subjectID));
 
@@ -86,8 +85,20 @@ function addSubject(subjectID) {
     subjectsList.appendChild(subjectRow);
 }
 
-function handleAddSubject(event) {
-    const subjectName = document.getElementById('subject-name').value;
+function handleAddSubject() {
+    const sel = document.getElementById('subject-name');
+    const subjectName = sel.value;
+
+    if (!subjectName || subjectName === '-1') {
+        alert('Seleziona una materia prima di aggiungerla.');
+        return;
+    }
+
+    // Evita duplicati
+    if (document.getElementById(subjectName)) {
+        alert('Questa materia è già presente.');
+        return;
+    }
 
     fetch('/materie', {
         method: 'POST',
@@ -100,6 +111,7 @@ function handleAddSubject(event) {
     .then(data => {
         if (data.message) {
             addSubject(subjectName);
+            sel.value = '-1'; // reset selezione
             alert('Materia aggiunta con successo');
         } else {
             alert(`Errore: ${data.error}`);
