@@ -645,7 +645,12 @@ button:focus {
     background-color: #bbb;
 }
 
-/* ── Loading Overlay ── */
+/* ── Notification label (desktop: hidden; mobile: shown in nav panel) ── */
+.notifiche-label {
+    display: none;
+}
+
+
 #loading-overlay {
     display: none;
     position: fixed;
@@ -814,6 +819,32 @@ button:focus {
         display: none;
     }
 
+    /* ── Mobile nav ordering ──
+     * 1. profile-dropdown (nome + azioni utente)
+     * 2. notifiche li
+     * 3. nav links (tutti gli altri li)
+     * 4. version (nascosto)
+     */
+    nav ul {
+        display: flex;  /* already flex, just reinforcing */
+    }
+
+    nav ul li {
+        order: 3;  /* default: nav links */
+    }
+
+    nav ul li.profile-dropdown {
+        order: 1;
+    }
+
+    nav ul li:has(.notifiche-link) {
+        order: 2;
+    }
+
+    nav ul li.version-display {
+        order: 4;
+    }
+
     /* Profile dropdown: inline in the mobile panel */
     .profile-dropdown {
         flex-direction: column;
@@ -864,6 +895,12 @@ button:focus {
     }
 
     .notifiche-link .icon {
+        color: var(--text-color);
+    }
+
+    .notifiche-label {
+        display: inline;
+        margin-left: 8px;
         color: var(--text-color);
     }
 
