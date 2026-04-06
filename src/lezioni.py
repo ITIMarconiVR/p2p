@@ -5,6 +5,7 @@ Blueprint per la gestione delle lezioni (disponibilità, prenotazioni, validazio
 from flask import Blueprint, request, jsonify, session
 from flask_login import login_required
 from markupsafe import escape
+from datetime import datetime
 
 from db import get_db
 from mail_utils import send_email, get_destinatari
@@ -187,12 +188,17 @@ def reserve_event():
             for des in get_destinatari(matricolaT):
                 dest.append(des)
 
-        ora_str = "13:40" if ora == 1 else "14:30" if ora == 2 else ora
-        message = (f"La lezione del giorno {data} alle ore {ora_str} "
-                   f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
-                   f"è stata prenotata dal tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}."
-                   f"\nMateria: {materiaL}\nArgomenti: {argomenti}"
-                   f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
+        ora_str = "13.40" if ora == 1 else "14.30" if ora == 2 else ora
+        data_obj = datetime.strptime(data, "%Y-%m-%d")
+        giorni = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
+        mesi = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+        data_estesa = f"{giorni[data_obj.weekday()]} {data_obj.strftime('%d')} {mesi[data_obj.month - 1]} {data_obj.year}"
+        
+        message = (f"La lezione del giorno {data_estesa} alle ore {ora_str} (turno {ora}) "
+                   f"con tutor {nome_cognP[0]} {nome_cognP[1]} ({nome_cognP[2]}) "
+                   f"è stata prenotata dal tutee {nome_cognT[0]} {nome_cognT[1]} ({nome_cognT[2]}).\n"
+                   f"Materia: {materiaL}\nArgomenti: {argomenti}\n\n"
+                   f"Questa è un'email generata automaticamente, si prega di non rispondere.")
         send_email(dest, "Lezione prenotata", message)
 
         return jsonify({"message": "Event reserved successfully"}), 200
@@ -472,19 +478,23 @@ def delete_lezione():
             for des in get_destinatari(matricolaT):
                 dest.append(des)
 
-        ora_str = "13:40" if ora == 1 else "14:30" if ora == 2 else ora
+        ora_str = "13.40" if ora == 1 else "14.30" if ora == 2 else ora
+        data_obj = datetime.strptime(data, "%Y-%m-%d")
+        giorni = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
+        mesi = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+        data_estesa = f"{giorni[data_obj.weekday()]} {data_obj.strftime('%d')} {mesi[data_obj.month - 1]} {data_obj.year}"
 
         if matricolaT is not None:
-            message = (f"La lezione del giorno {data} alle ore {ora_str} "
-                       f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
-                       f"e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} "
-                       f"è stata annullata da {deleter[0]} {deleter[1]}."
-                       f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
+            message = (f"La lezione del giorno {data_estesa} alle ore {ora_str} (turno {ora}) "
+                       f"con tutor {nome_cognP[0]} {nome_cognP[1]} ({nome_cognP[2]}) "
+                       f"e tutee {nome_cognT[0]} {nome_cognT[1]} ({nome_cognT[2]}) "
+                       f"è stata annullata da {deleter[0]} {deleter[1]}.\n\n"
+                       f"Questa è un'email generata automaticamente, si prega di non rispondere.")
         else:
-            message = (f"La lezione del giorno {data} alle ore {ora_str} "
-                       f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
-                       f"è stata annullata da {deleter[0]} {deleter[1]} {deleter[2]}."
-                       f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
+            message = (f"La lezione del giorno {data_estesa} alle ore {ora_str} (turno {ora}) "
+                       f"con tutor {nome_cognP[0]} {nome_cognP[1]} ({nome_cognP[2]}) "
+                       f"è stata annullata da {deleter[0]} {deleter[1]} ({deleter[2]}).\n\n"
+                       f"Questa è un'email generata automaticamente, si prega di non rispondere.")
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})
@@ -560,19 +570,23 @@ def delete_lezione_tutor():
             for des in get_destinatari(matricolaT):
                 dest.append(des)
 
-        ora_str = "13:40" if ora == 1 else "14:30" if ora == 2 else ora
+        ora_str = "13.40" if ora == 1 else "14.30" if ora == 2 else ora
+        data_obj = datetime.strptime(data, "%Y-%m-%d")
+        giorni = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
+        mesi = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+        data_estesa = f"{giorni[data_obj.weekday()]} {data_obj.strftime('%d')} {mesi[data_obj.month - 1]} {data_obj.year}"
 
         if matricolaT is not None and nome_cognT is not None:
-            message = (f"La lezione del giorno {data} alle ore {ora_str} "
-                       f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
-                       f"e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} "
-                       f"è stata annullata da {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]}."
-                       f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
+            message = (f"La lezione del giorno {data_estesa} alle ore {ora_str} (turno {ora}) "
+                       f"con tutor {nome_cognP[0]} {nome_cognP[1]} ({nome_cognP[2]}) "
+                       f"e tutee {nome_cognT[0]} {nome_cognT[1]} ({nome_cognT[2]}) "
+                       f"è stata annullata da {nome_cognP[0]} {nome_cognP[1]} ({nome_cognP[2]}).\n\n"
+                       f"Questa è un'email generata automaticamente, si prega di non rispondere.")
         else:
-            message = (f"La lezione del giorno {data} alle ore {ora_str} "
-                       f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
-                       f"è stata annullata da {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]}."
-                       f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
+            message = (f"La lezione del giorno {data_estesa} alle ore {ora_str} (turno {ora}) "
+                       f"con tutor {nome_cognP[0]} {nome_cognP[1]} ({nome_cognP[2]}) "
+                       f"è stata annullata da {nome_cognP[0]} {nome_cognP[1]} ({nome_cognP[2]}).\n\n"
+                       f"Questa è un'email generata automaticamente, si prega di non rispondere.")
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})
@@ -652,12 +666,17 @@ def delete_lezione_tutee():
         for des in get_destinatari(matricolaT):
             dest.append(des)
 
-        ora_str = "13:40" if ora == 1 else "14:30" if ora == 2 else ora
-        message = (f"La lezione del giorno {data} alle ore {ora_str} "
-                   f"con tutor {nome_cognP[0]} {nome_cognP[1]} {nome_cognP[2]} "
-                   f"e tutee {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]} "
-                   f"è stata annullata da {nome_cognT[0]} {nome_cognT[1]} {nome_cognT[2]}."
-                   f"\n\nQuesta è un'email generata automaticamente, si prega di non rispondere.")
+        ora_str = "13.40" if ora == 1 else "14.30" if ora == 2 else ora
+        data_obj = datetime.strptime(data, "%Y-%m-%d")
+        giorni = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
+        mesi = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+        data_estesa = f"{giorni[data_obj.weekday()]} {data_obj.strftime('%d')} {mesi[data_obj.month - 1]} {data_obj.year}"
+
+        message = (f"La lezione del giorno {data_estesa} alle ore {ora_str} (turno {ora}) "
+                   f"con tutor {nome_cognP[0]} {nome_cognP[1]} ({nome_cognP[2]}) "
+                   f"e tutee {nome_cognT[0]} {nome_cognT[1]} ({nome_cognT[2]}) "
+                   f"è stata annullata da {nome_cognT[0]} {nome_cognT[1]} ({nome_cognT[2]}).\n\n"
+                   f"Questa è un'email generata automaticamente, si prega di non rispondere.")
         send_email(dest, "Lezione cancellata", message)
 
         return jsonify({'message': 'Lezione rimossa con successo'})

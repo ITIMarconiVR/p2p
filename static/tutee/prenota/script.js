@@ -166,7 +166,9 @@ function createCalendar(matricola, fetchUrl) {
                                 classeP: event.classeP,
                                 materiaL: event.idMat,
                                 backgroundColor: event.ora === 1 ? '#FF5733' : '#33B5FF',
-                                borderColor: event.ora === 1 ? '#FF5733' : '#33B5FF'
+                                borderColor: event.ora === 1 ? '#FF5733' : '#33B5FF',
+                                nomeP: event.nomeP,
+                                cognomeP: event.cognomeP
                             }));
                         successCallback(events);
                     } else {
@@ -251,7 +253,10 @@ async function showPrenotaLezione(info) {
 
     const modal = document.getElementById('add-tutor-modal');
     const tutorinfo = document.getElementById('tutor-info');
-    tutorinfo.innerHTML = `Con Tutor: ${info.event._def.title.substring(4,)} ${info.event._def.extendedProps.classeP}`;
+    const nomeCognome = `${info.event.extendedProps.nomeP} ${info.event.extendedProps.cognomeP}`;
+    const classe = info.event.extendedProps.classeP;
+    const ora = info.event.extendedProps.ora === 1 ? '13:40' : '14:30';
+    tutorinfo.innerHTML = `Con Tutor: ${nomeCognome} (${classe}) alle ${ora}`;
 
     const select = document.getElementById('shift-mat');
     select.innerHTML = '';
