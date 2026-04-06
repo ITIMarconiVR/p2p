@@ -62,12 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'it',
+        buttonText: { today: 'Oggi' },
         firstDay: 1,
         selectable: true,
         events: function(fetchInfo, successCallback, failureCallback) {
+            showLoading('Caricamento calendario…');
             fetch('/lezioni2')
                 .then(response => response.json())
                 .then(data => {
+                    hideLoading();
                     if (Array.isArray(data)) {
                         const events = data.map(event => ({
                             id: event.id,
@@ -102,11 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             const formattedDate = eventDateObj.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
                             const oraStr = event.ora === 1 ? '13.40' : '14.30';
                             
-                            listItem.innerHTML = `<span>Richiesta da parte di <b>${event.nomeP}</b> per il giorno <b>${formattedDate}</b> dalle ${oraStr} (turno ${event.ora})</span>`;
+                            listItem.innerHTML = `<span>Richiesta da parte di <b>${event.nomeP}</b> per il giorno <b>${formattedDate}</b> alle ${oraStr} (turno ${event.ora})</span>`;
                             listItem.dataset.eventId = event.id;
                             
                             add.addEventListener('click', () => {
                                 if (confirm(`Vuoi validare questa lezione: ${event.title}?`)) {
+                                    showLoading('Validazione in corso…');
                                     fetch('/lezioni', {
                                         method: 'POST',
                                         headers: {
@@ -120,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     })
                                     .then(response => response.json())
                                     .then(data => {
+                                        hideLoading();
                                         if (data.message) {
                                             alert('Lezione validata con successo');
                                             unvalidatedEventsList.removeChild(listItem);
@@ -129,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         }
                                     })
                                     .catch(error => {
+                                        hideLoading();
                                         console.error('Errore durante la validazione della lezione', error);
                                         alert('Si è verificato un errore. Riprova.');
                                     });
@@ -156,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 })
                 .catch(error => {
+                    hideLoading();
                     failureCallback(error);
                 });
         }
@@ -175,6 +182,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     calendar.render();
+    // Legenda colori calendario
+    const _calLegend = document.createElement('div');
+    _calLegend.className = 'calendar-legend';
+    _calLegend.innerHTML = `
+        <div class='calendar-legend-item'>
+            <span class='calendar-legend-dot' style='background-color:#FF5733;'></span>
+            Turno 1 (13:40)
+        </div>
+        <div class='calendar-legend-item'>
+            <span class='calendar-legend-dot' style='background-color:#33B5FF;'></span>
+            Turno 2 (14:30)
+        </div>
+    `;
+    const _calToolbar = calendarEl.querySelector('.fc-toolbar');
+    if (_calToolbar) _calToolbar.insertAdjacentElement('afterend', _calLegend);
 
     document.getElementById('close-modal').addEventListener('click', function () {
         document.getElementById('modal-overlay').style.display = 'none';
@@ -212,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function valida_tutto() {
     if (confirm('Vuoi validare tutte le lezioni?')) {
+        showLoading('Validazione in corso…');
         fetch('/valida_tutto', {
             method: 'POST',
             headers: {
@@ -220,6 +243,7 @@ function valida_tutto() {
         })
         .then(response => response.json())
         .then(data => {
+            hideLoading();
             if (data.message) {
                 alert('Tutte le lezioni sono state validate con successo');
                 location.reload();
@@ -228,6 +252,7 @@ function valida_tutto() {
             }
         })
         .catch(error => {
+            hideLoading();
             console.error('Errore durante la validazione delle lezioni', error);
             alert('Si è verificato un errore. Riprova.');
         });

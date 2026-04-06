@@ -1,3 +1,28 @@
+// ── Loading Overlay helpers (disponibili globalmente) ──
+(function () {
+    const overlay = document.createElement('div');
+    overlay.id = 'loading-overlay';
+    overlay.innerHTML = `
+        <div class="loading-spinner"></div>
+        <span class="loading-label">Caricamento in corso…</span>
+    `;
+    document.body ? document.body.appendChild(overlay)
+                  : document.addEventListener('DOMContentLoaded', () => document.body.appendChild(overlay));
+})();
+
+function showLoading(msg) {
+    const overlay = document.getElementById('loading-overlay');
+    if (!overlay) return;
+    const label = overlay.querySelector('.loading-label');
+    if (label) label.textContent = msg || 'Caricamento in corso…';
+    overlay.classList.add('visible');
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) overlay.classList.remove('visible');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const profileDropdown = document.querySelector('.profile-dropdown');
     if (profileDropdown) {

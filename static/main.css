@@ -50,6 +50,30 @@
     box-shadow: var(--box-shadow);
 }
 
+.calendar-legend {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 8px 15px;
+    background-color: #fff;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.calendar-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.calendar-legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
     .fc-toolbar-title {
         font-size: 1.2rem !important;
@@ -490,4 +514,49 @@ button:focus {
 
 .notifiche-popup-actions .btn-secondary:hover {
     background-color: #bbb;
+}
+
+/* ── Loading Overlay ── */
+#loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.45);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 9000;
+}
+
+#loading-overlay.visible {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 52px;
+    height: 52px;
+    border: 6px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.loading-label {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.5; }
 }

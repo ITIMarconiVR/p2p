@@ -58,3 +58,8 @@ button:focus {
     display: flex;
     justify-content: space-between;
 }
+
+/* Capitalize FullCalendar Month Title */
+.fc-toolbar-title {
+    text-transform: capitalize !important;
+}

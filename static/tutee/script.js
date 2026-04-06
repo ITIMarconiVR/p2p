@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (userName) {
         const newUserName = userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         const greetingElement = document.getElementById('greeting');
-        
-        greetingElement.innerHTML = window.innerWidth <= 768 
-            ? `Bentornato,<br>${newUserName}!` 
+
+        greetingElement.innerHTML = window.innerWidth <= 768
+            ? `Bentornato,<br>${newUserName}!`
             : `Bentornato, ${newUserName}!`;
     }
 
@@ -25,6 +25,7 @@ function createCalendar(matricola, fetchUrl) {
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'it',
+        buttonText: { today: 'Oggi' },
         firstDay: 1,
         selectable: true,
         events: (fetchInfo, successCallback, failureCallback) => {
@@ -44,8 +45,8 @@ function createCalendar(matricola, fetchUrl) {
 
     if (window.innerWidth <= 768) {
         const today = new Date();
-        const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()+1));
-        const endOfWeek = new Date(startOfWeek); 
+        const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
+        const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(startOfWeek.getDate() + 7);
 
         calendar.changeView('listWeek', {
@@ -55,6 +56,21 @@ function createCalendar(matricola, fetchUrl) {
     }
 
     calendar.render();
+    // Legenda colori calendario
+    const _calLegend = document.createElement('div');
+    _calLegend.className = 'calendar-legend';
+    _calLegend.innerHTML = `
+        <div class='calendar-legend-item'>
+            <span class='calendar-legend-dot' style='background-color:#FF5733;'></span>
+            Turno 1 (13:40)
+        </div>
+        <div class='calendar-legend-item'>
+            <span class='calendar-legend-dot' style='background-color:#33B5FF;'></span>
+            Turno 2 (14:30)
+        </div>
+    `;
+    const _calToolbar = calendarEl.querySelector('.fc-toolbar');
+    if (_calToolbar) _calToolbar.insertAdjacentElement('afterend', _calLegend);
 }
 
 function fetchEvents(url, successCallback, failureCallback) {
@@ -120,19 +136,19 @@ function removeEvent(matricola, info) {
             matricolaP: info.event.extendedProps.matricolaP
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            alert('Reservation removed successfully');
-            location.reload();
-        } else {
-            alert(`Error: ${data.error}`);
-        }
-    })
-    .catch(error => {
-        console.error('Error removing reservation:', error);
-        alert('An error occurred. Please try again.');
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert('Reservation removed successfully');
+                location.reload();
+            } else {
+                alert(`Error: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error removing reservation:', error);
+            alert('An error occurred. Please try again.');
+        });
 }
 
 function loadUpcomingLessons(upLessons) {
@@ -147,7 +163,7 @@ function loadUpcomingLessons(upLessons) {
                     li.innerHTML = `<span><b>${data}</b> alle <b>${lesson.ora === 1 ? '13.40' : '14.30'} |</b> Lezione con tutor: <b>${lesson.nomeP} ${lesson.cognomeP}</b> su <b>${lesson.materiaL}: ${lesson.argomenti}</b></span>`;
                     return li;
                 });
-                lessons.forEach(lesson => {if (lesson !== null) upLessons.appendChild(lesson)});
+                lessons.forEach(lesson => { if (lesson !== null) upLessons.appendChild(lesson) });
             } else {
                 console.error('Unexpected response format:', data);
             }

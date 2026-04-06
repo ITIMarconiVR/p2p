@@ -92,6 +92,7 @@ function populateTutorDropdowns() {
 
 async function loadTutors() {
     try {
+        showLoading('Caricamento lista tutor…');
         const res = await fetch('/tutors');
         allTutors = await res.json();
         
@@ -109,7 +110,9 @@ async function loadTutors() {
         
         populateTutorDropdowns();
         renderTutors();
+        hideLoading();
     } catch (e) {
+        hideLoading();
         console.error('Errore durante il recupero dei tutor:', e);
     }
 }

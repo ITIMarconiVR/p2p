@@ -52,6 +52,12 @@ button:focus {
     border: 1px solid #ddd;
 }
 
+#tutors-table td:last-child {
+    width: 1%;
+    white-space: nowrap;
+    padding-right: 10px;
+}
+
 #tutors-table tr:nth-child(even) {
     background-color: #fcfcfc;
 }
@@ -65,15 +71,36 @@ button:focus {
     background-color: #dfdfdf;
 }
 
+#tutors-table thead {
+    position: sticky;
+    top: -20px;
+}
+
 #tutors-table button {
     padding: 5px 10px;
     border-radius: 10px;
     font-weight: bold;
+    margin-right: 5px;
 }
 
-#tutors-table thead {
-    position: sticky;
-    top: -20px;
+#tutors-table td button:last-child {
+    margin-right: 0;
+}
+
+#tutors-table .details-button {
+    background-color: var(--primary-color_docente);
+}
+
+#tutors-table .details-button:hover {
+    background-color: var(--primary-color-hover_docente);
+}
+
+#tutors-table .delete-button {
+    background-color: #dc3545;
+}
+
+#tutors-table .delete-button:hover {
+    background-color: #b02a37;
 }
 
 /* Add Button */
@@ -87,4 +114,9 @@ button:focus {
 
 .circular-button:hover {
     background-color: var(--primary-color-hover_docente);
+}
+
+/* Capitalize FullCalendar Month Title */
+.fc-toolbar-title {
+    text-transform: capitalize !important;
 }

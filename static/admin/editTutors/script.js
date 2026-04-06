@@ -15,9 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tutorsTableBody = document.querySelector('#tutors-table tbody');
 
     // Fetch tutors
+    showLoading('Caricamento tutor…');
     fetch('/tutors')
         .then(response => response.json())
         .then(data => {
+            hideLoading();
             let totalLezioni = 0;
             data.forEach(tutor => {
                 totalLezioni += Number(tutor.lezioni) || 0;
@@ -28,13 +30,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${tutor.cognome}</td>
                     <td>${tutor.classe}</td>
                     <td>${tutor.lezioni}</td>
-                    <td><button class="delete-button">Elimina</button></td>
+                    <td>
+                        <button class="details-button">Dettagli</button>
+                        <button class="delete-button">Elimina</button>
+                    </td>
                 `;
-                row.addEventListener('click', () => seeTutorInfo(tutor));
+                row.querySelector('.details-button').addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    seeTutorInfo(tutor);
+                });
                 row.querySelector('.delete-button').addEventListener('click', (event) => {
                     event.stopPropagation();
                     handleDeleteTutor(tutor.matricolaP, row);
-                    });
+                });
                 tutorsTableBody.appendChild(row);
             });
 
@@ -48,7 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             tutorsTableBody.appendChild(totalRow);
         })
-        .catch(error => console.error('Error fetching tutors:', error));
+        .catch(error => {
+            hideLoading();
+            console.error('Error fetching tutors:', error);
+        });
 
     // Modal handling
     const modal = document.getElementById('add-tutor-modal');

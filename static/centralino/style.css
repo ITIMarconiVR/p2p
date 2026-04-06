@@ -74,3 +74,8 @@ table tr:hover {
     justify-content: space-between;
     align-items: center;
 }
+
+/* Capitalize FullCalendar Month Title */
+.fc-toolbar-title {
+    text-transform: capitalize !important;
+}

@@ -139,6 +139,7 @@ function createCalendar(matricola, fetchUrl) {
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'it',
+        buttonText: { today: 'Oggi' },
         firstDay: 1,
         selectable: true,
         // views: {
@@ -147,9 +148,11 @@ function createCalendar(matricola, fetchUrl) {
         //     }
         // },
         events: (fetchInfo, successCallback, failureCallback) => {
+            showLoading('Caricamento calendario…');
             fetch(fetchUrl)
                 .then(response => response.json())
                 .then(data => {
+                    hideLoading();
                     if (Array.isArray(data)) {
                         const now = new Date();
                         const events = data
@@ -172,6 +175,7 @@ function createCalendar(matricola, fetchUrl) {
                     }
                 })
                 .catch(error => {
+                    hideLoading();
                     console.error('Errore durante il recupero degli eventi', error);
                     failureCallback(error);
                 });
@@ -211,6 +215,21 @@ function createCalendar(matricola, fetchUrl) {
     }
 
     calendar.render();
+    // Legenda colori calendario
+    const _calLegend = document.createElement('div');
+    _calLegend.className = 'calendar-legend';
+    _calLegend.innerHTML = `
+        <div class='calendar-legend-item'>
+            <span class='calendar-legend-dot' style='background-color:#FF5733;'></span>
+            Turno 1 (13:40)
+        </div>
+        <div class='calendar-legend-item'>
+            <span class='calendar-legend-dot' style='background-color:#33B5FF;'></span>
+            Turno 2 (14:30)
+        </div>
+    `;
+    const _calToolbar = calendarEl.querySelector('.fc-toolbar');
+    if (_calToolbar) _calToolbar.insertAdjacentElement('afterend', _calLegend);
 }
 
 async function showPrenotaLezione(info) {
@@ -292,7 +311,11 @@ async function confirmLesson(info) {
         alert('Gli argomenti della lezione devono essere al massimo 100 caratteri.\nNe hai inseriti: ' + argomenti.length);
         return;
     }
+    const modal = document.getElementById('add-tutor-modal');
+    modal.style.display = 'none';
+    modal.onclick = null;
     try {
+        showLoading('Prenotazione in corso…');
         const response = await fetch('/prenota', {
             method: 'POST',
             headers: {
@@ -308,11 +331,9 @@ async function confirmLesson(info) {
                 nomecognT: userName
             })
         });
+        hideLoading();
         const data = await response.json();
         if (data.message) {
-            const modal = document.getElementById('add-tutor-modal');
-            modal.style.display = 'none';
-            modal.onclick = null;
             alert('Lezione prenotata con successo');
             destinatari = [];
             location.reload();
@@ -320,6 +341,7 @@ async function confirmLesson(info) {
             alert(`Errore: ${data.error}`);
         }
     } catch (error) {
+        hideLoading();
         console.error('Errore durante la prenotazione della lezione', error);
         alert('Si è verificato un errore. Riprova.');
     }

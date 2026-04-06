@@ -12,20 +12,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     createCalendar('calendar', `/lezioni2?matricolaP=${matricola}`);
 
+    showLoading('Caricamento lezioni…');
     countLessons().then(([future, pastReserved]) => {
         updateLessonCounts(future, pastReserved);
-        populateLessonLists(future, pastReserved);
+        populateLessonLists(future, pastReserved).then(() => hideLoading());
     });
 
 });
 
 function updateLessonCounts(future, pastReserved) {
-    document.getElementById('lessons-count').textContent = `Hai ${future} lezioni future`;
-    document.getElementById('lessons-count-PASTReserved').textContent = `Hai tenuto ${pastReserved} lezioni`;
-    document.getElementById('lessons-total').textContent = `Hai ${future + pastReserved} lezioni totali`;
+    document.getElementById('lessons-count').textContent = future;
+    document.getElementById('lessons-count-PASTReserved').textContent = pastReserved;
+    document.getElementById('lessons-total').textContent = (future + pastReserved);
 
-    if (future + pastReserved >= 40) {
-        document.getElementById('lessons-total').style.color = 'red';
+    if (future + pastReserved >= 35) {
+        document.getElementById('lessons-total').style.color = '#dc3545';
     }
 }
 
@@ -43,11 +44,12 @@ async function populateLessonLists(future, pastReserved) {
 
                 const li = document.createElement('li');
                 if (date < new Date()) {
-                    li.innerHTML = `Lezione ${dateFormatted} alle ${event.ora === 2 ? '14:30' : '13:40'} con ${event.matricolaT}: ${event.nomeT} ${event.cognomeT}`;
+                    const capitalizedDateFormatted = dateFormatted.charAt(0).toUpperCase() + dateFormatted.slice(1);
+                    li.innerHTML = `${capitalizedDateFormatted} alle ${event.ora === 2 ? '14:30' : '13:40'} (turno ${event.ora}) con ${event.nomeT} ${event.cognomeT}`;
                     heldList.appendChild(li);   
                 } else {
                     if (event.matricolaT !== null) {
-                        li.innerHTML = `Lezione in programma <b>${dateFormatted}</b> alle <b>${event.ora === 2 ? '14:30' : '13:40'}</b> con ${event.matricolaT}: <b>${event.nomeT} ${event.cognomeT}</b> <br> <b>${event.materiaL}</b>: ${event.argomenti}`;
+                        li.innerHTML = `Lezione in programma ${dateFormatted} alle ${event.ora === 2 ? '14:30' : '13:40'} (turno ${event.ora}) con ${event.nomeT} ${event.cognomeT}<br>${event.materiaL}: ${event.argomenti}`;
                         scheduledList.appendChild(li);
                     }
                 }
@@ -65,12 +67,15 @@ function createCalendar(id, fetchUrl) {
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'it',
+        buttonText: { today: 'Oggi' },
         firstDay: 1,
         selectable: true,
         events: (fetchInfo, successCallback, failureCallback) => {
+            showLoading('Caricamento calendario…');
             fetch(fetchUrl)
                 .then(response => response.json())
                 .then(data => {
+                    hideLoading();
                     if (Array.isArray(data)) {
                         const events = data.map(event => ({
                             title: `T${event.ora} ${event.validata === 0 ? 'Richiesta' : ''} ${event.matricolaT === null ? 'Lezione' : (event.nomeT + " " + event.cognomeT)} alle ${event.ora === 1 ? '13:40' : '14:30'}`,
@@ -90,6 +95,7 @@ function createCalendar(id, fetchUrl) {
                     }
                 })
                 .catch(error => {
+                    hideLoading();
                     console.error('Error fetching events:', error);
                     failureCallback(error);
                 });
@@ -125,6 +131,21 @@ function createCalendar(id, fetchUrl) {
         });
     }
     calendar.render();
+    // Legenda colori calendario
+    const _calLegend = document.createElement('div');
+    _calLegend.className = 'calendar-legend';
+    _calLegend.innerHTML = `
+        <div class='calendar-legend-item'>
+            <span class='calendar-legend-dot' style='background-color:#FF5733;'></span>
+            Turno 1 (13:40)
+        </div>
+        <div class='calendar-legend-item'>
+            <span class='calendar-legend-dot' style='background-color:#33B5FF;'></span>
+            Turno 2 (14:30)
+        </div>
+    `;
+    const _calToolbar = calendarEl.querySelector('.fc-toolbar');
+    if (_calToolbar) _calToolbar.insertAdjacentElement('afterend', _calLegend);
 }
 
 function handleDateClick(info, calendar) {
@@ -169,7 +190,9 @@ async function countLessons() {
 function showAddLesson(info, calendar) {
     const modal = document.getElementById('add-tutor-modal');
     const dataInfo = document.getElementById('data-info');
-    dataInfo.innerHTML = info.dateStr;
+    const dateObj = new Date(info.dateStr);
+    const formattedDate = dateObj.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: '2-digit' });
+    dataInfo.innerHTML = formattedDate;
 
     modal.style.display = 'flex';
     modal.onclick = (event) => {

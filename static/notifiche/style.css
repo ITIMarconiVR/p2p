@@ -100,3 +100,9 @@ body.role-centralino .notifica-card.non-letta {
     padding: 5px 12px;
     font-size: 0.85rem;
 }
+
+
+/* Capitalize FullCalendar Month Title */
+.fc-toolbar-title {
+    text-transform: capitalize !important;
+}

@@ -54,3 +54,8 @@ button:active {
 button:focus {
     box-shadow: 0 2px 4px rgba(0, 221, 155, 0.3);
 }
+
+/* Capitalize FullCalendar Month Title */
+.fc-toolbar-title {
+    text-transform: capitalize !important;
+}
