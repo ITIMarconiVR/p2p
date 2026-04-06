@@ -43,15 +43,6 @@ button:focus {
 }
 
 
-.cardlist li{
-    margin: 0;
-}
-
-#unvalidated-events-header{
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 20px;
-}
 
 
 .cardList li {

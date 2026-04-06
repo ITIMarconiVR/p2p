@@ -23,13 +23,7 @@ body.role-centralino button    { background-color: var(--primary-color_centralin
 body.role-centralino button:hover { background-color: var(--primary-color-hover_centralino); }
 body.role-centralino button:active { background-color: var(--primary-color-active_centralino); }
 
-/* Header notifiche */
-#notifiche-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 5px 10px 5px;
-}
+
 
 /* Card notifica */
 .notifica-card {

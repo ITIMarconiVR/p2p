@@ -50,18 +50,14 @@
     <main>
         <section id="description-section">
             <h3>Descrizione personale</h3>
-            <textarea id="tutor-description" rows="4" style="width: 100%; resize: vertical;"
+            <textarea id="tutor-description"
                 placeholder="Scrivi una breve descrizione personale da mostrare ai tutee..."></textarea>
-            <br><br>
             <button type="button" onclick="handleSaveDescription()">Salva descrizione</button>
         </section>
-        <hr>
-        <br>
-        <h2>Le materie che insegni</h2>
 
         <section id="add-subject-form">
+            <h3>Aggiungi materia</h3>
             <form id="add-subject">
-                <h3>Aggiungi materia</h3>
                 <div class="form-group">
                     <p>Nome della materia come indicato sull'orario</p>
                     <div class="select-wrapper">
@@ -75,19 +71,20 @@
             </form>
         </section>
 
-        <div class="content-wrapper">
-            <table class="subjects-table">
+        <section>
+            <h3>Le tue materie</h3>
+            <table class="subjects-table styled-table">
                 <thead>
                     <tr>
                         <th>Materia</th>
-                        <th>Rimuovi</th>
+                        <th>Azioni</th>
                     </tr>
                 </thead>
                 <tbody id="subjects-table-content">
                     <!-- Subjects will be dynamically added here -->
                 </tbody>
             </table>
-        </div>
+        </section>
     </main>
 </body>
 

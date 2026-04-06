@@ -40,35 +40,15 @@ button:focus {
     box-shadow: 0 2px 4px rgba(238, 0, 0, 0.3);
 }
 
-/* Table */
-#tutors-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#tutors-table th, #tutors-table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
+/* Table – overrides on styled-table */
+#tutors-table th {
+    background-color: var(--primary-color_docente) !important;
+    color: #fff !important;
 }
 
 #tutors-table td:last-child {
     width: 1%;
     white-space: nowrap;
-    padding-right: 10px;
-}
-
-#tutors-table tr:nth-child(even) {
-    background-color: #fcfcfc;
-}
-
-#tutors-table th {
-    background-color: var(--primary-color_docente);
-    color: #fff;
-}
-
-#tutors-table tr:hover {
-    background-color: #dfdfdf;
 }
 
 #tutors-table thead {

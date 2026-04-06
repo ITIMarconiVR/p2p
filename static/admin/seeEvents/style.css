@@ -42,40 +42,24 @@ button:focus {
     box-shadow: 0 2px 4px var(--primary-color-active_docente);
 }
 
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+/* Table header color override */
+.styled-table th {
+    background-color: var(--primary-color_docente) !important;
+    color: #fff !important;
 }
 
-table th, .subjects-table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
-
-table th {
-    background-color: var(--primary-color_docente);
-    color: #fff;
-}
-
-table tr:nth-child(even) {
-    background-color: #fcfcfc;
-}
-
-table tr:hover {
-    background-color: #dfdfdf;
-}
-
-
-
-#change-day{
+#change-day {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
+    gap: 10px;
+    margin-top: 4px;
 }
 
+#change-day > div {
+    display: flex;
+    gap: 10px;
+}
 
 /* Capitalize FullCalendar Month Title */
 .fc-toolbar-title {

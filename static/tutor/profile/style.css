@@ -5,68 +5,8 @@ header {
     background-color: var(--primary-color_tutor);
 }
 
-main {
-    align-items: center;
-}
-
-.content-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 2vw;
-    width: fit-content;
-}
-
-#add-subject{
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    justify-content: center;
-    align-items: center;
-}
-
-/* Table */
-.subjects-table {
-    width: 25%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-.subjects-table th, .subjects-table td {
-    padding: 10px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
-
-.subjects-table th {
-    background-color: var(--primary-color_tutor);
-    color: #fff;
-}
-
-.subjects-table tr:nth-child(even) {
-    background-color: #fcfcfc;
-}
-
-.subjects-table tr:hover {
-    background-color: #dfdfdf;
-}
-
-.subjects-table {
-    width: 20px !important;
-}
-
-section{
-    width: 100%;
-}
-
 /* Button */
 button {
-    width: 200px;
-    margin: 5px;
     background-color: var(--primary-color_tutor);
 }
 
@@ -85,6 +25,73 @@ button:focus {
 select:focus {
     border-color: var(--primary-color_tutor);
     box-shadow: 0 0 5px rgba(92, 0, 221, 0.3);
+}
+
+/* Description textarea */
+#tutor-description {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+    resize: vertical;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    min-height: 100px;
+    line-height: 1.5;
+}
+
+#tutor-description:focus {
+    outline: none;
+    border-color: var(--primary-color_tutor);
+    box-shadow: 0 0 0 3px rgba(91, 0, 219, 0.1);
+}
+
+#description-section button {
+    margin-top: 4px;
+}
+
+/* Add subject form */
+#add-subject {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#add-subject .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#add-subject .form-group p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #757575;
+}
+
+/* Table – styled via shared class */
+.subjects-table th {
+    background-color: var(--primary-color_tutor) !important;
+    color: #fff !important;
+}
+
+.subjects-table .remove-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 0.9rem;
+    box-shadow: none;
+}
+
+.subjects-table .remove-btn:hover {
+    color: #a71d2a;
+    background: rgba(220, 53, 69, 0.08);
+    border-radius: 6px;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Capitalize FullCalendar Month Title */
