@@ -8,25 +8,24 @@ header {
 /*filters*/
 .filters {
     display: flex;
-    align-self: center;
     flex-direction: column;
     gap: 1vh;
-    width: fit-content;
+    width: 100%;
 }
 
 .filters h3 {
     align-self: center;
 }
 
-.filters div{
+.filters > div {
     display: flex;
     gap: 1vw;
-    /* width: 400px; */
+    align-items: center;
 }
 
-
 .filters label {
-    width: 100%;
+    flex: 0 0 auto;
+    width: 220px;
 }
 
 select:focus {
@@ -58,4 +57,26 @@ button:focus {
 /* Capitalize FullCalendar Month Title */
 .fc-toolbar-title {
     text-transform: capitalize !important;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .filters {
+        align-self: stretch;
+        width: 100%;
+    }
+
+    .filters > div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .filters label {
+        width: 100%;
+    }
+
+    .filters .select-wrapper {
+        width: 100%;
+    }
 }

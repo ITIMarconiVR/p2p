@@ -65,3 +65,20 @@ button:focus {
 .fc-toolbar-title {
     text-transform: capitalize !important;
 }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    #change-day {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #change-day > div {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    #change-day button {
+        width: 100%;
+    }
+}

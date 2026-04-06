@@ -24,29 +24,74 @@ function hideLoading() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ── Profile dropdown (desktop) ──
     const profileDropdown = document.querySelector('.profile-dropdown');
     if (profileDropdown) {
         profileDropdown.addEventListener('click', (e) => {
+            // On mobile the profile menu is always visible inside the nav panel,
+            // so skip the toggle behaviour
+            if (window.innerWidth <= 768) return;
             profileDropdown.classList.toggle('active');
             e.stopPropagation();
         });
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', () => {
             if (profileDropdown.classList.contains('active')) {
                 profileDropdown.classList.remove('active');
             }
         });
     }
 
+    // ── Hamburger menu (mobile) ──
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('nav');
+
+    if (menuToggle && nav) {
+        // Toggle open/close on hamburger click
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = nav.classList.toggle('open');
+            menuToggle.querySelector('.icon').textContent = isOpen ? 'close' : 'menu';
+        });
+
+        // Close when clicking the backdrop (outside the ul panel)
+        nav.addEventListener('click', (e) => {
+            // clicked backdrop, not the panel itself
+            if (e.target === nav) {
+                nav.classList.remove('open');
+                menuToggle.querySelector('.icon').textContent = 'menu';
+            }
+        });
+
+        // Close when any nav link is tapped
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('open');
+                menuToggle.querySelector('.icon').textContent = 'menu';
+            });
+        });
+
+        // Close on resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                nav.classList.remove('open');
+                menuToggle.querySelector('.icon').textContent = 'menu';
+            }
+        });
+    }
+
+    // ── Greeting personalisation ──
     if (typeof userName !== 'undefined' && userName) {
         const newUserName = userName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         const greetingElement = document.getElementById('greeting');
         if (greetingElement) {
-            greetingElement.innerHTML = window.innerWidth <= 768 
-                ? `Bentornato,<br>${newUserName}!` 
+            greetingElement.innerHTML = window.innerWidth <= 768
+                ? `Bentornato,<br>${newUserName}!`
                 : `Bentornato, ${newUserName}!`;
         }
     }
 
+    // ── Notification badge & popup ──
     fetch('/notifiche/count')
         .then(res => res.json())
         .then(data => {
@@ -78,13 +123,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         overlay.classList.remove('visible');
                     });
                 }
-                
+
                 const countText = document.getElementById('notifiche-popup-text');
                 if (countText) {
                     countText.textContent = 'Hai ' + data.count + ' nuov' + (data.count === 1 ? 'a' : 'e') + ' notific' + (data.count === 1 ? 'a' : 'he') + ' da leggere.';
                 }
-                
-                // Mostra il pop-up solo se l'utente non è già sulla pagina delle notifiche
+
+                // Show popup only if not already on notifiche page
                 if (!window.location.pathname.includes('/notifiche')) {
                     overlay.classList.add('visible');
                 }

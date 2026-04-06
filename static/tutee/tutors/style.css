@@ -8,23 +8,24 @@ header {
 /*filters*/
 .filters {
     display: flex;
-    align-self: center;
     flex-direction: column;
     gap: 1vh;
-    width: fit-content;
+    width: 100%;
 }
 
 .filters h3 {
     align-self: center;
 }
 
-.filters div{
+.filters > div {
     display: flex;
     gap: 1vw;
+    align-items: center;
 }
 
 .filters label {
-    width: 100%;
+    flex: 0 0 auto;
+    width: 220px;
 }
 
 select:focus {
@@ -67,7 +68,7 @@ button:focus, .prenota-btn:focus {
 /* Tutors grid and cards */
 .tutor-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 16px;
 }
 
@@ -112,4 +113,36 @@ button:focus, .prenota-btn:focus {
 /* Capitalize FullCalendar Month Title */
 .fc-toolbar-title {
     text-transform: capitalize !important;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .filters {
+        align-self: stretch;
+        width: 100%;
+    }
+
+    .filters > div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .filters label {
+        width: 100%;
+    }
+
+    .filters .select-wrapper {
+        width: 100%;
+    }
+
+    /* Single column grid on mobile */
+    .tutor-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .prenota-btn {
+        width: 100%;
+        padding: 12px 16px;
+    }
 }

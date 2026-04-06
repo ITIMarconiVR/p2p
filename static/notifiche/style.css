@@ -23,8 +23,6 @@ body.role-centralino button    { background-color: var(--primary-color_centralin
 body.role-centralino button:hover { background-color: var(--primary-color-hover_centralino); }
 body.role-centralino button:active { background-color: var(--primary-color-active_centralino); }
 
-
-
 /* Card notifica */
 .notifica-card {
     display: flex;
@@ -87,6 +85,8 @@ body.role-centralino .notifica-card.non-letta {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .notifica-footer button {
@@ -94,8 +94,19 @@ body.role-centralino .notifica-card.non-letta {
     font-size: 0.85rem;
 }
 
-
 /* Capitalize FullCalendar Month Title */
 .fc-toolbar-title {
     text-transform: capitalize !important;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    .notifica-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .notifica-footer button {
+        width: 100%;
+    }
 }

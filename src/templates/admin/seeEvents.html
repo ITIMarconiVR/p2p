@@ -14,6 +14,9 @@
 <body>
     <header>
         <h1 id="greeting">Admin Dashboard</h1>
+        <button class="menu-toggle" aria-label="Apri menu" aria-expanded="false">
+            <span class="icon">menu</span>
+        </button>
         <nav>
             <ul>
                 <li><a href="/loginDocenti">Dashboard</a></li>
@@ -58,6 +61,7 @@
 
         <section>
             <h3>Lezioni alle 13.40</h3>
+            <div class="table-responsive">
             <table id="lessons-table-1" class="styled-table">
                 <thead>
                     <tr>
@@ -71,10 +75,12 @@
                 <tbody>
                 </tbody>
             </table>
+            </div>
         </section>
 
         <section>
             <h3>Lezioni alle 14.30</h3>
+            <div class="table-responsive">
             <table id="lessons-table-2" class="styled-table">
                 <thead>
                     <tr>
@@ -88,6 +94,7 @@
                 <tbody>
                 </tbody>
             </table>
+            </div>
         </section>
     </main>
 

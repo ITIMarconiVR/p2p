@@ -1,4 +1,4 @@
-@import '../../main.css'; 
+@import '../../main.css';
 
 /* Header */
 header {
@@ -99,4 +99,26 @@ button:focus {
 /* Capitalize FullCalendar Month Title */
 .fc-toolbar-title {
     text-transform: capitalize !important;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+    #tutors-table td:last-child {
+        width: auto;
+    }
+
+    #tutors-table button {
+        padding: 8px 10px;
+        margin-right: 4px;
+        margin-bottom: 4px;
+    }
+
+    /* Circular add button: bigger touch target on mobile */
+    .circular-button {
+        width: 56px;
+        height: 56px;
+        font-size: 1.8em;
+        bottom: 24px;
+        left: 16px;
+    }
 }
