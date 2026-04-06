@@ -267,17 +267,15 @@ section > h2 {
 .cardList li {
     background-color: #fff;
     border: 1px solid #e8e8e8;
-    border-left: 3px solid transparent;
     border-radius: 8px;
     padding: 12px 16px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    transition: border-left-color var(--transition), box-shadow var(--transition);
+    transition: box-shadow var(--transition);
     line-height: 1.5;
 }
 
 .cardList li:hover {
-    border-left-color: #aaa;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), inset 3px 0 0 0 #aaa;
 }
 
 /* Stats Grid (tutor dashboard) */

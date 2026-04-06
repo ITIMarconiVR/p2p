@@ -31,34 +31,33 @@ body.role-centralino button:active { background-color: var(--primary-color-activ
     flex-direction: column;
     gap: 8px;
     padding: 15px !important;
-    transition: background-color 0.3s ease, border-left 0.3s ease;
-    border-left: 4px solid transparent;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Notifica non letta – grassetto + bordo colorato */
+/* Notifica non letta – grassetto + ombra interna colorata */
 .notifica-card.non-letta {
     font-weight: bold;
-    border-left: 4px solid #333;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 4px 0 0 0 #333 !important;
     background-color: #f0f4ff !important;
 }
 
 body.role-tutor .notifica-card.non-letta {
-    border-left-color: var(--primary-color_tutor);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 4px 0 0 0 var(--primary-color_tutor) !important;
     background-color: #f3edff !important;
 }
 
 body.role-tutee .notifica-card.non-letta {
-    border-left-color: var(--primary-color_tutee);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 4px 0 0 0 var(--primary-color_tutee) !important;
     background-color: #e6fff9 !important;
 }
 
 body.role-docente .notifica-card.non-letta {
-    border-left-color: var(--primary-color_docente);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 4px 0 0 0 var(--primary-color_docente) !important;
     background-color: #fff0f0 !important;
 }
 
 body.role-centralino .notifica-card.non-letta {
-    border-left-color: var(--primary-color_centralino);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), inset 4px 0 0 0 var(--primary-color_centralino) !important;
     background-color: #fff6ed !important;
 }
 
