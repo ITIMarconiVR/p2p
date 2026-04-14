@@ -40,6 +40,6 @@ COPY static/ ./static/
 EXPOSE 8010
 
 # ─── Comando di avvio ─────────────────────────────────────────────────────────
-# app.py usa ssl_context="adhoc" (pyOpenSSL), quindi lanciamo direttamente
-# python app.py dalla directory src/.
-CMD ["python", "src/app.py"]
+# Usiamo gunicorn per servire l'applicazione in produzione, passandogli
+# il modulo 'app' e la variabile 'app'.
+CMD ["gunicorn", "--chdir", "src", "-w", "4", "-b", "0.0.0.0:8010", "app:app"]

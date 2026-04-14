@@ -53,8 +53,8 @@ services:
       DB_PASSWORD: p2p2025
       DB_NAME: p2pdev
 
-    ports:
-      - "8010:8010"   # mappa la porta Flask sull'host
+    expose:
+      - "8010"        # espone la porta solo internamente per il reverse proxy Nginx
 
     # Bind mount per lo sviluppo in tempo reale:
     # qualsiasi modifica ai file Python sull'host è immediatamente visibile
@@ -62,6 +62,19 @@ services:
     volumes:
       - ./src:/app/src
       - ./static:/app/static
+
+# ────────────────────────────────────────────────────────────────────────────
+  # Container Nginx (Reverse Proxy)
+  # ────────────────────────────────────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: p2p_nginx
+    ports:
+      - "8010:80"       # Mappa la porta HTTP standard sull'host
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - web           # Assicuriamoci che Flask parta prima di Nginx
 
 # ────────────────────────────────────────────────────────────────────────────
 # Named volume per la persistenza dei dati MySQL
