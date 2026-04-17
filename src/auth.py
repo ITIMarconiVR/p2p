@@ -47,10 +47,12 @@ def login():
     client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
     state = os.urandom(16).hex()
+    secure_base_url = request.base_url.replace("http://", "https://")
 
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
+#LLL 17/4/26        redirect_uri=request.base_url + "/callback",
+        redirect_uri=secure_base_url+ "/callback",
         scope=["openid", "email", "profile", "https://www.googleapis.com/auth/calendar"],
         state=state
     )
@@ -73,9 +75,17 @@ def callback():
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
 
-    oauth_session = OAuth2Session(GOOGLE_CLIENT_ID, state=state, redirect_uri=request.base_url)
+    # Fissiamo i permessi OAUTHLIB per accettare http locale (se si va via nginx http)
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+    # Dobbiamo garantire che gli URL di callback usino https come fatto nella route /login,
+    # altrimenti OAuth disconoscerà e respingerà l'autorizzazione o lancia InsecureTransportError
+    secure_redirect_uri = request.base_url.replace("http://", "https://")
+    secure_auth_response = request.url.replace("http://", "https://")
+
+    oauth_session = OAuth2Session(GOOGLE_CLIENT_ID, state=state, redirect_uri=secure_redirect_uri)
     oauth_session.fetch_token(token_endpoint, client_secret=GOOGLE_CLIENT_SECRET,
-                              authorization_response=request.url)
+                              authorization_response=secure_auth_response)
     session['google_token'] = oauth_session.token
 
     user_info_url = "https://www.googleapis.com/oauth2/v3/userinfo"
